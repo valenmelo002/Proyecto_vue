@@ -1,18 +1,11 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
+import HeaderComponent from './components/HeaderComponent.vue'
 </script>
 
 <template>
-  <header>
-    <img alt="fuego" class="logo" src="@/assets/fuego.jpeg" width="300px" height="190px" />
-  </header>
-  <div class="wrapper">
-    <nav>
-      <RouterLink to="/login">Login</RouterLink>
-      <RouterLink to="/register">Register</RouterLink>
-      <RouterLink to="/restore">Restore</RouterLink>
-    </nav>
-  </div>
+  <HeaderComponent />
+
   <RouterView />
 </template>
 
@@ -23,12 +16,6 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.logo {
-  display: flex;
-
-  margin: 0 auto 2rem;
 }
 
 nav {

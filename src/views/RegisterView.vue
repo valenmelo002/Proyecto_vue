@@ -1,13 +1,15 @@
 <template>
   <div class="container">
     <div class="form-container">
+      <h1>Encuentra tu cuenta</h1>
       <form>
-        <input type="text" placeholder="Nombre completo" />
-        <input type="text" placeholder="Username" />
         <input type="email" placeholder="Email" />
-        <input type="password" placeholder="Contraseña" />
-        <input type="password" placeholder="Confirma contraseña" />
-        <button type="button">Registrarse</button>
+        <input type="password" placeholder="Nueva contraseña" />
+        <input type="password" placeholder="Nueva contraseña" />
+
+        <button type="button">Restablecer contraseña</button>
+
+        <p><Router-link to="/Login">¿Recuerdas tu contraseña?</Router-link></p>
       </form>
     </div>
   </div>
