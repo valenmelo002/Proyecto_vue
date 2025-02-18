@@ -6,11 +6,9 @@ import RestoreView from '../views/RestoreView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-
     {
-      path: '/login',
-      name: 'login',
-      component: LoginView,
+      path: '/',
+      redirect: '/login',
     },
 
     {
@@ -23,8 +21,13 @@ const router = createRouter({
       path: '/restore',
       name: 'restore',
       component: RestoreView,
-    }
+    },
 
+    {
+      path: '/login',
+      name: 'login',
+      component: LoginView,
+    },
   ],
 })
 
