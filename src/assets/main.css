@@ -2,7 +2,7 @@
 
 #app {
   height: 100vh;
-  background-color: rgba(87, 91, 122, 0.77);
+  background: linear-gradient(to right, #01979c, #a272c7);
   margin: 0 auto;
   padding: 2rem;
   font-weight: normal;

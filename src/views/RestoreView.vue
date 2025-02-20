@@ -6,6 +6,8 @@
         <input type="password" placeholder="Nueva contraseña" />
         <input type="password" placeholder="Nueva contraseña" />
         <button type="button">Restablecer contraseña</button>
+
+        <p><Router-link to="/Login">¿Recuerdas tu contraseña?</Router-link></p>
       </form>
     </div>
   </div>
