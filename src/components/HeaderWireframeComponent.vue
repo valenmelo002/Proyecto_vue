@@ -27,7 +27,7 @@ const logout = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #34495e;
+  background: #b8b9b9d0;
   color: white;
   padding: 15px 20px;
 }
@@ -39,7 +39,7 @@ const logout = () => {
 }
 
 button {
-  background: #e74c3c;
+  background: #e73c3c;
   border: none;
   padding: 8px 12px;
   color: white;
