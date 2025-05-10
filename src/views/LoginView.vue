@@ -1,69 +1,30 @@
-<script lang="ts">
-import { defineComponent, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
+<script setup lang="ts">
+import { authSetStore } from '../stores/AuthStore'
+import { ref } from 'vue'
 
-export default defineComponent({
-  name: 'LoginView',
-  setup() {
-    const username = ref('')
-    const password = ref('')
-    const router = useRouter()
-    const authStore = useAuthStore()
+const authStore = authSetStore()
+const email = ref('')
+const password = ref('')
 
-    const login = () => {
-      // Verificar si los campos están vacíos
-      if (!username.value || !password.value) {
-        alert('Por favor, ingresa usuario y contraseña') // Alerta si algún campo está vacío
-        return
-      }
-
-      const fakeUsers = [
-        { username: 'Adso', password: '123' },
-        { username: 'Juan', password: '456' },
-        { username: 'Maria', password: '789' },
-      ]
-
-      const user = fakeUsers.find(
-        (u) => u.username === username.value && u.password === password.value,
-      )
-
-      if (user) {
-        // Aquí puedes agregar la simulación de login
-        const fakeToken = 'fake-jwt-token' // Token simulado
-        const fakeUser = { user, fakeToken } // Datos del usuario simulado
-
-        // Guardamos el token y el usuario en Pinia
-        authStore.login(fakeUser, fakeToken)
-
-        console.log('Inicio de sesión exitoso')
-        router.push('/home') // Redirigir al home
-      } else {
-        alert('Usuario o contraseña incorrectos')
-      }
-    }
-
-    return {
-      username,
-      password,
-      login,
-    }
-  },
-})
+const handlerLogin = () => {
+  if (!email.value || !password.value) {
+    alert('todos los campos son necesarios.')
+    return
+  } else {
+    authStore.login({
+      email: email.value,
+      password: password.value,
+    })
+  }
+} 
 </script>
 
 <template>
   <div class="container">
     <div class="form-container">
       <h1>Ingresar</h1>
-      <form @submit.prevent="login">
-        <input
-          type="text"
-          v-model="username"
-          id="username"
-          name="username"
-          placeholder="Username"
-        />
+      <form @submit.prevent="handlerLogin">
+        <input type="text" v-model="email" id="email" name="email" placeholder="email"/>
         <input type="password" v-model="password" placeholder="Contraseña" />
         <button type="submit">Iniciar sesion</button>
 
