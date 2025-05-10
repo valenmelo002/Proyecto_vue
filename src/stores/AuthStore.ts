@@ -1,46 +1,35 @@
 import router from '@/router';
 import AuthService from '@/services/AuthService';
-import { defineStore } from 'pinia'
-//import { router } from '@/router'
+import { defineStore } from 'pinia';
 
 export const authSetStore = defineStore('auth', {
   state: () => ({
-    user: JSON.parse(localStorage.getItem('user') || 'null'), //toDo:Se puede reventar al proteger las rutas por el NULL porque no es un JSON string válido
+    user: JSON.parse(localStorage.getItem('user') || 'null'),
     token: localStorage.getItem('token') || null,
   }),
   actions: {
-    async login(userData: { email: string, password: string }): Promise<void>{
-      
-      const auth = new AuthService
-        const login = await auth.login(userData.email, userData.password)
-    
-      if(login.errors?.[0]){
-        /*login.JSON({"message": "credenciales invalidas"})*/
-        alert(login.errors[0].message)
-      } else {
-        const token = login.token
-        //Actualizar
-        this.token = token
+    async login(userData: { email: string, password: string }): Promise<void> {
+      const auth = new AuthService();
+      const login = await auth.login(userData.email, userData.password);
 
-        //Almacenar
-        localStorage.setItem('token', token)
- 
-        router.push('/inventario')
-      }   
-      
+      if (login.errors?.[0]) {
+        alert(login.errors[0].message);
+      } else {
+        const token = login.token;
+        this.token = token;
+        localStorage.setItem('token', token);
+        router.push('/inventario');
+      }
+    },
+
+    isAuthenticated(): boolean {
+      return !!this.token;
     },
 
     logout() {
-      //restablece
-      this.user = null
-      this.token = null
-
-      //elimina
-      localStorage.removeItem('user')
-      localStorage.removeItem('token')
-
-      router.push('/login')
-
-    },
-  },
-})
+      this.token = null;
+      localStorage.removeItem('token');
+      router.push('/login');
+    }
+  }
+});

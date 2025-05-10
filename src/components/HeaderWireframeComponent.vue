@@ -9,10 +9,10 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth'
+import { authSetStore } from '@/stores/AuthStore';
 import { useRouter } from 'vue-router'
 
-const authStore = useAuthStore()
+const authStore = authSetStore();
 const router = useRouter()
 
 const logout = () => {
