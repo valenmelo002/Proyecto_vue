@@ -1,5 +1,5 @@
 <template>
-  <div class="home-container">
+  <div class="dashboard-container">
     <h1>Bienvenido a la Plataforma</h1>
     <p>Selecciona una opción del menú para continuar.</p>
   </div>
@@ -8,7 +8,7 @@
 <script setup lang="ts"></script>
 
 <style scoped>
-.home-container {
+.dashboard-container {
   text-align: center;
   padding: 2rem;
   border-radius: 10px;

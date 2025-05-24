@@ -1,53 +1,46 @@
 <template>
-  <header class="header">
-    <h1>Dashboard</h1>
-    <div class="user-info">
-      <span>👤 Usuario</span>
-      <button @click="logout">🚪 Cerrar sesión</button>
+  <v-app-bar
+    app
+    flat
+    color="deep-purple"
+    density="default"
+  >  <!-- el density da el tamaño de header (prominent > default> comfortable > compact)-->
+
+    <LogoComponent class="logo mr-4" />
+
+    <TopFooterComponent class="d-none d-md-flex" />
+
+    <div class="d-flex align-center gap-4">
+      <v-btn class="logout-button" color="error" @click="logout" size="small" variant="flat">
+        Cerrar sesión
+      </v-btn>
     </div>
-  </header>
+  </v-app-bar>
 </template>
 
 <script setup lang="ts">
 import { authSetStore } from '@/stores/AuthStore';
 import { useRouter } from 'vue-router'
+import LogoComponent from '@/components/LogoComponent.vue'
+import TopFooterComponent from '@/components/TopFooterComponent.vue'
 
 const authStore = authSetStore();
 const router = useRouter()
 
 const logout = () => {
-  console.log('Cerrando sesión...')
   authStore.logout()
   router.push('/login')
 }
 </script>
 
 <style scoped>
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #b8b9b9d0;
-  color: white;
-  padding: 15px 20px;
-}
+  .logo {
+    height: 3.1rem;
+    width: auto;
+    margin-left: 1rem;
+  }
 
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-button {
-  background: #e73c3c;
-  border: none;
-  padding: 8px 12px;
-  color: white;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-button:hover {
-  background: #c0392b;
-}
+  .logout-button {
+    margin-right: 1rem;
+  }
 </style>

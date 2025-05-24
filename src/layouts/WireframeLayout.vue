@@ -1,35 +1,18 @@
 <script setup lang="ts">
-import SidebarWireframeComponent from '../components/SiderbarWireframeComponent.vue'
-import HeaderWireframeComponent from '../components/HeaderWireframeComponent.vue'
+import SidebarWireframeComponent from '@/components/SidebarWireframeComponent.vue';
+import HeaderWireframeComponent from '@/components/HeaderWireframeComponent.vue';
 </script>
 
 <template>
-  <div class="wireframe-container">
+  <v-app>
+    <HeaderWireframeComponent />
     <SidebarWireframeComponent />
-    <div class="main-content">
-      <HeaderWireframeComponent />
-      <div class="content">
-        <router-view />
-      </div>
-    </div>
-  </div>
+
+      <!-- Contenido principal -->
+      <v-main>
+          <router-view />
+      </v-main>
+
+  </v-app>
 </template>
 
-<style scoped>
-.wireframe-container {
-  display: flex;
-  height: 100vh;
-}
-
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-main {
-  flex: 1;
-  padding: 20px;
-  background: #f4f4f4;
-}
-</style>
