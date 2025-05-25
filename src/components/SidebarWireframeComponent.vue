@@ -39,7 +39,7 @@
       <v-list-item
         prepend-icon="mdi-cube-outline"
         title="Productos"
-        to="/productos"
+        to="/producto"
         link
       />
       <v-list-item

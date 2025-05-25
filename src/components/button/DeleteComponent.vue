@@ -6,8 +6,8 @@
 
     <ConfirmDialog
       v-model="showDialog"
-      title="¿Eliminar producto?"
-      :message="`¿Estás seguro de que deseas eliminar el producto?`"
+      :title="`¿Eliminar ${resource}?`"
+      :message="`¿Estás seguro de que deseas eliminar este ${resource}?`"
       @confirm="confirmDelete"
       @cancel="showDialog = false"
     />
@@ -17,17 +17,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import ConfirmDialog from '@/components/ModalComponent.vue'
-import InventarioService from '@/services/InventarioService'
 
 const props = defineProps<{
-  item: {
-    id: number
-    nombre_producto: string
-  }
+  item: { id: number }
+  resource: string
 }>()
 
 const emit = defineEmits<{
-  (e: 'deleted'): void
+  (e: 'confirm-delete', item: { id: number }): void
 }>()
 
 const showDialog = ref(false)
@@ -36,14 +33,8 @@ function openDialog() {
   showDialog.value = true
 }
 
-async function confirmDelete() {
-  try {
-    await InventarioService.destroy(props.item.id)
-    emit('deleted')
-  } catch (error) {
-    console.error('Error al eliminar producto:', error)
-  } finally {
-    showDialog.value = false
-  }
+function confirmDelete() {
+  emit('confirm-delete', props.item)
+  showDialog.value = false
 }
 </script>
