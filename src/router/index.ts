@@ -5,7 +5,8 @@ import RegisterView from '@/views/RegisterView.vue';
 import RestoreView from '@/views/RestoreView.vue';
 import DashboardView from '@/views/DashboardView.vue';
 import InventarioView from '@/views/InventoryView.vue';
-
+import ProductsView from '@/views/ProductsView.vue';
+import ProviderView from '@/views/ProviderView.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -41,6 +42,18 @@ const router = createRouter({
       path: '/inventario',
       name: 'inventario',
       component: InventarioView,
+      meta: { layout: 'WireframeLayout' }
+    },
+    {
+      path: '/producto',
+      name: 'producto',
+      component: ProductsView,
+      meta: { layout: 'WireframeLayout' }
+    },
+    {
+      path: '/proveedores',
+      name: 'proveedores',
+      component: ProviderView,
       meta: { layout: 'WireframeLayout' }
     }
   ]

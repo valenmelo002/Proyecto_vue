@@ -1,7 +1,7 @@
 <template>
   <div class="pa-4">
     <!-- FORMULARIO -->
-    <div class="mb-6" style="max-width: 600px;">
+    <div class="mb-6">
       <v-text-field label="Código" v-model="form.codigo" class="mb-2" />
       <v-text-field label="Nombre del Producto" v-model="form.nombre_producto" />
       <v-text-field label="Categoría" v-model="form.categoria" class="mb-2" />
@@ -40,7 +40,11 @@
       <template v-slot:item.acciones="{ item }">
         <div class="d-flex ga-1">
           <EditButtonComponent :item="item" @edit="editItem" />
-          <DeleteInventoryButton :item="item" @deleted="loadItems(currentOptions)" />
+          <DeleteButtonComponent
+            :item="item"
+            resource="producto"
+            @confirm-delete="deleteItem"
+          />
         </div>
       </template>
 
@@ -60,7 +64,7 @@ import { ref, watch } from 'vue'
 import InventarioService from '@/services/InventarioService'
 import ConfirmDialog from '@/components/ModalComponent.vue'
 import EditButtonComponent from '@/components/button/EditComponent.vue'
-import DeleteInventoryButton from '@/components/button/DeleteComponent.vue'
+import DeleteButtonComponent from '@/components/button/DeleteComponent.vue'
 
 // Columnas de la tabla
 const headers = ref([
@@ -144,6 +148,15 @@ function editItem(item: any) {
   }
   mode.value = 'update'
   window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+async function deleteItem(item: { id: number }) {
+  try {
+    await InventarioService.destroy(item.id)
+    loadItems(currentOptions.value)
+  } catch (error) {
+    console.error('Error al eliminar el producto:', error)
+  }
 }
 
 function loadItems(options: any) {
