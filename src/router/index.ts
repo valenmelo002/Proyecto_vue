@@ -6,6 +6,7 @@ import RestoreView from '@/views/RestoreView.vue';
 import DashboardView from '@/views/DashboardView.vue';
 import InventarioView from '@/views/InventoryView.vue';
 import ProductsView from '@/views/ProductsView.vue';
+import ReceptionView from '@/views/ReceptionView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -48,6 +49,12 @@ const router = createRouter({
       path: '/producto',
       name: 'producto',
       component: ProductsView,
+      meta: { layout: 'WireframeLayout' }
+    },
+     {
+      path: '/recepcion',
+      name: 'recepcion',
+      component: ReceptionView,
       meta: { layout: 'WireframeLayout' }
     }
   ]

@@ -50,8 +50,8 @@
       />
       <v-list-item
         prepend-icon="mdi-truck"
-        title="Pedidos"
-        to="/pedidos"
+        title="Recepcion"
+        to="/recepcion"
         link
       />
       <v-list-item
