@@ -7,6 +7,9 @@ import DashboardView from '@/views/DashboardView.vue';
 import InventarioView from '@/views/InventoryView.vue';
 import ProductsView from '@/views/ProductsView.vue';
 import ReceptionView from '@/views/ReceptionView.vue';
+import HistoryInventoryView from '@/views/HistoryInventoryView.vue';
+import ProviderView from '@/views/ProviderView.vue';
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,6 +58,18 @@ const router = createRouter({
       path: '/recepcion',
       name: 'recepcion',
       component: ReceptionView,
+      meta: { layout: 'WireframeLayout' }
+    },
+     {
+      path: '/proveedores',
+      name: 'proveedores',
+      component: ProviderView,
+      meta: { layout: 'WireframeLayout' }
+    },
+    {
+      path: '/historial-inventario',
+      name: 'historial-inventario',
+      component: HistoryInventoryView,
       meta: { layout: 'WireframeLayout' }
     }
   ]

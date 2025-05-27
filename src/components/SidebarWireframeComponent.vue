@@ -44,8 +44,8 @@
       />
       <v-list-item
         prepend-icon="mdi-view-list"
-        title="Categorías"
-        to="/categorias"
+        title="Historial Inventario"
+        to="/historial-inventario"
         link
       />
       <v-list-item
@@ -56,8 +56,8 @@
       />
       <v-list-item
         prepend-icon="mdi-account-group"
-        title="Clientes"
-        to="/clientes"
+        title="Proveedores"
+        to="/Proveedores"
         link
       />
       <v-list-item

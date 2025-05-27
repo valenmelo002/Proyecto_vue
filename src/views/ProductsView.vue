@@ -29,7 +29,7 @@
 
       <v-switch label="Disponible" v-model="form.disponible" class="mb-4" />
 
-      <v-btn color="primary" @click="confirmDialog = true" :loading="loading" class="mr-2">
+      <v-btn color="primary" @click="validarYConfirmar" :loading="loading" class="mr-2">
         {{ mode === 'create' ? 'Guardar' : 'Actualizar' }}
       </v-btn>
       <v-btn @click="resetForm">Cancelar</v-btn>
@@ -75,6 +75,20 @@
         </tr>
       </template>
     </v-data-table-server>
+
+    <v-snackbar
+      v-model="snackbar.show"
+      :timeout="3000"
+      :color="snackbar.color"
+      elevation="2"
+      top
+      right
+    >
+      {{ snackbar.message }}
+      <template #actions>
+        <v-btn text @click="snackbar.show = false">Cerrar</v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -127,6 +141,12 @@ const confirmDialog = ref(false)
 const categorias = ref([])
 const unidades = ref([])
 
+const snackbar = ref({
+  show: false,
+  message: '',
+  color: 'success',
+})
+
 async function loadSelects() {
   try {
     categorias.value = await CategoriaService.getAll()
@@ -149,6 +169,26 @@ function resetForm() {
   mode.value = 'create'
 }
 
+function validarYConfirmar() {
+  if (
+    !form.value.nombre ||
+    !form.value.descripcion ||
+    form.value.precio === '' ||
+    form.value.precio <= 0 ||
+    !form.value.categoria_id ||
+    !form.value.unidad_medida_id
+  ) {
+    snackbar.value = {
+      show: true,
+      message: 'Por favor completa todos los campos obligatorios con datos válidos.',
+      color: 'error',
+    }
+    return
+  }
+
+  confirmDialog.value = true
+}
+
 async function submit() {
   confirmDialog.value = false
   loading.value = true
@@ -164,14 +204,29 @@ async function submit() {
 
     if (mode.value === 'create') {
       await ProductoService.create(data)
+      snackbar.value = {
+        show: true,
+        message: 'Producto creado con éxito.',
+        color: 'success',
+      }
     } else {
       await ProductoService.update(form.value.id!, data)
+      snackbar.value = {
+        show: true,
+        message: 'Producto actualizado con éxito.',
+        color: 'success',
+      }
     }
 
     resetForm()
     loadItems(currentOptions.value)
   } catch (e) {
     console.error('Error al guardar:', e)
+    snackbar.value = {
+      show: true,
+      message: 'Error al guardar el producto.',
+      color: 'error',
+    }
   } finally {
     loading.value = false
   }
@@ -195,8 +250,18 @@ async function deleteItem(item: { id: number }) {
   try {
     await ProductoService.destroy(item.id)
     loadItems(currentOptions.value)
+    snackbar.value = {
+      show: true,
+      message: 'Producto eliminado con éxito.',
+      color: 'success',
+    }
   } catch (error) {
     console.error('Error al eliminar el producto:', error)
+    snackbar.value = {
+      show: true,
+      message: 'Error al eliminar el producto.',
+      color: 'error',
+    }
   }
 }
 
@@ -216,6 +281,11 @@ function loadItems(options: any) {
     })
     .catch((error) => {
       console.error('Error al cargar productos:', error)
+      snackbar.value = {
+        show: true,
+        message: 'Error al cargar productos.',
+        color: 'error',
+      }
     })
     .finally(() => {
       loading.value = false

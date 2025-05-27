@@ -1,14 +1,13 @@
-// src/services/RecepcionService.ts
-const API_URL = "http://localhost:3333/recepcion"
+const API_URL = 'http://localhost:3333/historial-inventario'
 
-export default class RecepcionService {
+export default class HistorialInventarioService {
   static async getToken() {
-    return localStorage.getItem("token")
+    return localStorage.getItem('token')
   }
 
   static async list() {
     const token = await this.getToken()
-    const response = await fetch(`${API_URL}`, {
+    const response = await fetch(API_URL, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -30,36 +29,10 @@ export default class RecepcionService {
 
   static async create(data: Record<string, any>) {
     const token = await this.getToken()
-    const response = await fetch(`${API_URL}`, {
-      method: "POST",
+    const response = await fetch(API_URL, {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    })
-    return response.json()
-  }
-
-  static async update(id: number, data: Record<string, any>) {
-    const token = await this.getToken()
-    const response = await fetch(`${API_URL}/${id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    })
-    return response.json()
-  }
-
-  static async put(id: number, data: Record<string, any>) {
-    const token = await this.getToken()
-    const response = await fetch(`${API_URL}/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(data),
@@ -70,7 +43,7 @@ export default class RecepcionService {
   static async destroy(id: number) {
     const token = await this.getToken()
     const response = await fetch(`${API_URL}/${id}`, {
-      method: "DELETE",
+      method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -81,12 +54,12 @@ export default class RecepcionService {
   static async getPaginated({
     page = 1,
     itemsPerPage = 10,
-    sortBy = [] as { key: string; order: 'asc' | 'desc'}[],
-    search = {} as { folio?: string }
+    sortBy = [] as { key: string; order: 'asc' | 'desc' }[],
+    search = {} as { producto?: string }
   }) {
-    const token = localStorage.getItem("token")
+    const token = await this.getToken()
     const sortKey = sortBy[0]?.key ?? 'fecha'
-    const order = sortBy[0]?.order ?? 'asc'
+    const order = sortBy[0]?.order ?? 'desc'
 
     const params = new URLSearchParams({
       page: page.toString(),
@@ -95,26 +68,26 @@ export default class RecepcionService {
       order,
     })
 
-    if (search.folio) {
-      params.append('folio', search.folio)
+    if (search.producto) {
+      params.append('producto', search.producto)
     }
 
     const response = await fetch(`${API_URL}?${params.toString()}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     })
 
     if (!response.ok) {
-      throw new Error('Error al obtener las recepciones')
+      throw new Error('Error al obtener historial de inventario')
     }
 
     const result = await response.json()
     return {
       items: result.data,
-      total: result.total
+      total: result.total,
     }
   }
 }

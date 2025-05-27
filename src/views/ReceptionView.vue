@@ -24,7 +24,7 @@
       <v-text-field label="Cantidad" v-model.number="form.cantidad" type="number" class="mb-2" />
       <v-textarea label="Observación" v-model="form.observacion" class="mb-4" />
 
-      <v-btn color="primary" @click="confirmDialog = true" :loading="loading" class="mr-2">
+      <v-btn color="primary" @click="handleBeforeSubmit" :loading="loading" class="mr-2">
         {{ mode === 'create' ? 'Guardar' : 'Actualizar' }}
       </v-btn>
       <v-btn @click="resetForm">Cancelar</v-btn>
@@ -162,7 +162,7 @@ function resetForm() {
   mode.value = 'create'
 }
 
-async function submit() {
+function handleBeforeSubmit() {
   if (
     !form.value.producto_id ||
     !form.value.unidad_medida_id ||
@@ -171,13 +171,15 @@ async function submit() {
   ) {
     snackbar.value = {
       show: true,
-      message: 'Por favor completa todos los campos obligatorios con datos válidos.',
+      message: 'Todos los campos son obligatorios y deben ser válidos.',
       color: 'error',
     }
-    confirmDialog.value = false
     return
   }
+  confirmDialog.value = true
+}
 
+async function submit() {
   confirmDialog.value = false
   loading.value = true
   try {
