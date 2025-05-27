@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// Variable global para la URL base del backend
 const API_BASE_URL = 'http://localhost:8080/api/ocr';
 
 export async function procesarImagenService(imagen: File): Promise<any> {
@@ -41,7 +40,7 @@ export async function obtenerPesoService(
 // src/services/pesoService.ts
 export async function obtenerRegistrosPesos() {
   const response = await axios.get(`${API_BASE_URL}`);
-  return response.data; // Array de objetos: [{ producto, cantidad, peso, uM }, ...]
+  return response.data; 
 }
 
 export async function actualizarRegistroOCR(id: number, data: { text: number, uM: string, categoria: string, estado: string }) {

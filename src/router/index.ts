@@ -58,7 +58,7 @@ const router = createRouter({
       meta: { layout: 'WireframeLayout' }
     },
       {
-      path: '/dashboard/zona-pesaje',
+      path: '/zona-pesaje',
       name: 'zona-pesaje',
       component: entradaSalidaProductosView,
       meta: { layout: 'WireframeLayout' }
