@@ -1,45 +1,98 @@
 <template>
-  <div class="peso">
-    <h1>Reconocimiento de Texto en Imagen</h1>
-    <input
-      type="file"
-      accept="image/png, image/jpeg, image/jpg"
-      @change="handleImageUpload"
-    />
-    <button @click="procesarImagen" :disabled="!imagen || cargando">
-      Procesar Imagen
-    </button>
-    <div v-if="imagen" style="margin: 1rem 0">
-      <img :src="previewUrl" alt="Vista previa" style="max-width: 200px" />
-    </div>
-    <div v-if="cargando" style="margin: 1rem">Procesando imagen...</div>
-    <div class="peso-inputs">
-      <input
-        v-model="textoReconocido"
-        type="number"
-        step="any"
-        placeholder="Peso reconocido"
+  <v-container class="py-8" style="background-color: #fff; min-height: 100%;">
+    <v-card class="mx-auto pa-4" max-width="1500">
+      <v-card-title class="text-h5 mb-4"
+        >Reconocimiento de Texto en Imagen</v-card-title
+      >
+      <v-file-input
+        accept="image/png, image/jpeg, image/jpg"
+        label="Selecciona una imagen"
+        prepend-icon="mdi-camera"
+        show-size
+        :disabled="cargando"
+        @change="handleVuetifyImageUpload"
+        :rules="fileRules"
       />
-      <select v-model="unidad">
-        <option value="kg">kg</option>
-        <option value="lb">lb</option>
-        <option value="Ml">Ml</option>
-        <option value="L">L</option>
-      </select>
-    </div>
-    <select v-model="categoria">
-      <option value="carnes">carnes</option>
-      <option value="bebidas">bebidas</option>
-      <option value="verduras">verduras</option>
-    </select>
-    <select v-model="estado">
-      <option value="entrada">entrada</option>
-      <option value="salida">salida</option>
-    </select>
-    <button @click="obtenerPeso" class="obtener-peso-btn">Obtener peso</button>
-    <h2 v-if="peso !== null">Peso detectado: {{ peso }} {{ unidad }}</h2>
-    <PesoTabla />
-  </div>
+      <v-btn
+        class="mt-4"
+        color="primary"
+        :disabled="!imagen || cargando"
+        @click="procesarImagen"
+        block
+      >
+        Procesar Imagen
+      </v-btn>
+      <v-progress-linear
+        v-if="cargando"
+        indeterminate
+        color="primary"
+        class="my-4"
+      />
+      <v-img
+        v-if="imagen"
+        :src="previewUrl"
+        max-width="350"
+        class="my-4 mx-auto"
+        aspect-ratio="0"
+        contain
+      />
+      <v-row class="my-2" align="center">
+        <v-col cols="6">
+          <v-text-field
+            v-model="textoReconocido"
+            label="Peso reconocido"
+            type="number"
+            dense
+          />
+        </v-col>
+        <v-col cols="6">
+          <v-select
+            v-model="unidad"
+            :items="['kg', 'lb', 'Ml', 'L']"
+            label="Unidad"
+            dense
+          />
+        </v-col>
+      </v-row>
+      <v-row class="my-2" align="center">
+        <v-col cols="6">
+          <v-select
+            v-model="categoria"
+            :items="['carnes', 'bebidas', 'verduras']"
+            label="Categoría"
+            dense
+          />
+        </v-col>
+        <v-col cols="6">
+          <v-select
+            v-model="estado"
+            :items="['entrada', 'salida']"
+            label="Estado"
+            dense
+          />
+        </v-col>
+      </v-row>
+      <v-btn
+        color="success"
+        class="my-2"
+        block
+        @click="obtenerPeso"
+      >
+        Obtener peso
+      </v-btn>
+      <v-alert
+        v-if="peso !== null"
+        type="info"
+        class="mt-4"
+        border="start"
+        color="primary"
+        variant="tonal"
+      >
+        Peso detectado: {{ peso }} {{ unidad }}
+      </v-alert>
+    </v-card>
+    <PesoTabla class="mt-8" />
+  </v-container>
 </template>
 
 <script lang="ts" setup>
@@ -62,14 +115,29 @@ const estado = ref<"entrada" | "salida">("entrada");
 
 const cargando = ref(false);
 
-function handleImageUpload(event: Event) {
-  const target = event.target as HTMLInputElement;
-  const file = target.files?.[0] || null;
-  if (file) {
-    imagen.value = file;
-    textoReconocido.value = "";
-    peso.value = null;
+const fileRules = [
+  (v: File[] | File | null) => {
+    if (!v || (Array.isArray(v) && v.length === 0))
+      return "Debes seleccionar una imagen";
+    return true;
+  },
+];
+
+function handleVuetifyImageUpload(filesOrEvent: File[] | File | Event | null) {
+  let file: File | null = null;
+
+  if (filesOrEvent && (filesOrEvent as Event).target) {
+    const target = (filesOrEvent as Event).target as HTMLInputElement;
+    file = target.files?.[0] || null;
+  } else if (Array.isArray(filesOrEvent)) {
+    file = filesOrEvent[0] || null;
+  } else {
+    file = filesOrEvent as File | null;
   }
+
+  imagen.value = file;
+  textoReconocido.value = "";
+  peso.value = null;
 }
 
 async function procesarImagen() {
@@ -83,8 +151,6 @@ async function procesarImagen() {
     const respuesta = (await procesarImagenService(imagen.value)) as
       | RespuestaImagen
       | string;
-    console.log("Respuesta del backend:", respuesta);
-
     if (typeof respuesta === "object" && respuesta !== null) {
       const obj = respuesta as RespuestaImagen;
       if ("number" in obj) {
@@ -129,47 +195,3 @@ async function obtenerPeso() {
   }
 }
 </script>
-
-<style scoped>
-.peso {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-}
-.peso-inputs {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-input[type="number"] {
-  width: 100px;
-  text-align: center;
-}
-select {
-  height: 32px;
-}
-button {
-  padding: 0.75rem 1.5rem;
-  background-color: #1e90ff;
-  color: #ffffff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-top: 1rem;
-}
-button:disabled {
-  background-color: #aaa;
-  cursor: not-allowed;
-}
-button:hover:enabled {
-  background-color: #1c86ee;
-}
-h2 {
-  margin-top: 1rem;
-  color: #1e90ff;
-}
-</style>
