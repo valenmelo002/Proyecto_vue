@@ -61,17 +61,18 @@
         link
       />
       <v-list-item
+        prepend-icon="mdi-file-document-outline"
+        title="Factura Compra"
+        to="/facturaCompra"
+        link
+      />
+      <v-list-item
         prepend-icon="mdi-phone"
         title="Contacto"
         to="/contacto"
         link
       />
-        <v-list-item
-        prepend-icon="mdi-phone"
-        title="Factura Compra"
-        to="/facturaCompra"
-        link
-      />
+  
     </v-list>
   </v-navigation-drawer>
 </template>
