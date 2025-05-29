@@ -18,7 +18,7 @@ export const authSetStore = defineStore('auth', {
         const token = login.token;
         this.token = token;
         localStorage.setItem('token', token);
-        router.push('/inventario');
+        router.push('/dashboard');
       }
     },
 
