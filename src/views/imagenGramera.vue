@@ -100,6 +100,7 @@ import { ref, computed } from "vue";
 import {
   procesarImagenService,
   obtenerPesoService,
+  crearRegistroOCR,
 } from "@/services/entradaSalidaProductos";
 import PesoTabla from "@/components/movimientoTabla.vue";
 
@@ -147,19 +148,10 @@ async function procesarImagen() {
   }
   cargando.value = true;
   try {
-    type RespuestaImagen = { number?: number; numero?: number };
-    const respuesta = (await procesarImagenService(imagen.value)) as
-      | RespuestaImagen
-      | string;
+    // 1. Extrae el número de la imagen
+    const respuesta = await procesarImagenService(imagen.value);
     if (typeof respuesta === "object" && respuesta !== null) {
-      const obj = respuesta as RespuestaImagen;
-      if ("number" in obj) {
-        textoReconocido.value = obj.number?.toString() || "";
-      } else if ("numero" in obj) {
-        textoReconocido.value = obj.numero?.toString() || "";
-      } else {
-        textoReconocido.value = "";
-      }
+      textoReconocido.value = respuesta.number?.toString() || respuesta.numero?.toString() || "";
     } else if (typeof respuesta === "string") {
       textoReconocido.value = respuesta;
     } else {
@@ -179,19 +171,17 @@ async function obtenerPeso() {
     return;
   }
   try {
-    const valorNumerico = Number(textoReconocido.value);
-    peso.value = await obtenerPesoService(
-      0,
-      valorNumerico,
-      unidad.value,
-      categoria.value,
-      estado.value
-    );
-    alert(`Peso detectado: ${peso.value} ${unidad.value}`);
+    await crearRegistroOCR({
+      categoria: categoria.value,
+      text: textoReconocido.value,
+      uM: unidad.value,
+      estado: estado.value,
+    });
+    alert("Registro guardado correctamente.");
     window.location.reload();
-  } catch {
-    alert("peso detectado correctamente.");
-    window.location.reload();
+  } catch (e) {
+    alert("Error al guardar el registro.");
+    console.error(e);
   }
 }
 </script>

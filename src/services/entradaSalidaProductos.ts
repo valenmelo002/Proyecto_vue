@@ -51,3 +51,8 @@ export async function actualizarRegistroOCR(id: number, data: { text: number, uM
 export async function eliminarRegistroOCR(id: number) {
   await axios.delete(`${API_BASE_URL}/${id}`);
 }
+
+export async function crearRegistroOCR(data: { categoria: string, text: string, uM: string, estado: string }) {
+  const response = await axios.post(`${API_BASE_URL}`, data);
+  return response.data;
+}

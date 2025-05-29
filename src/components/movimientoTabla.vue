@@ -61,8 +61,8 @@ import {
   obtenerRegistrosPesos,
   actualizarRegistroOCR,
   eliminarRegistroOCR,
+  crearRegistroOCR,
 } from "@/services/entradaSalidaProductos";
-import axios from "axios";
 
 const loading = ref(false);
 const registros = ref<any[]>([]);
@@ -111,7 +111,7 @@ async function guardarRegistro() {
       return;
     }
   } else {
-    await axios.post("http://localhost:8080/api/ocr", {
+    await crearRegistroOCR({
       categoria: nuevo.value.categoria,
       text: nuevo.value.text.toString(),
       uM: nuevo.value.uM,
