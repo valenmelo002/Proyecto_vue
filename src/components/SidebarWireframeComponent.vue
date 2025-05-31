@@ -45,13 +45,13 @@
       <v-list-item
         prepend-icon="mdi-view-list"
         title="Historial"
-        to="/historial"
+        to="/historial-inventario"
         link
       />
       <v-list-item
         prepend-icon="mdi-truck"
-        title="Pedidos"
-        to="/pedidos"
+        title="Recepcion"
+        to="/recepcion"
         link
       />
       <v-list-item

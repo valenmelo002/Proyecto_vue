@@ -7,8 +7,10 @@ import DashboardView from '@/views/DashboardView.vue';
 import InventarioView from '@/views/InventoryView.vue';
 import ProductsView from '@/views/ProductsView.vue';
 import ProviderView from '@/views/ProviderView.vue';
-import FacturaCompra from '@/views/facturaCompra.vue';
+import HistoryInventoryView from '@/views/HistoryInventoryView.vue';
+import ReceptionView from '@/views/ReceptionView.vue';
 import entradaSalidaProductosView from '@/views/imagenGramera.vue';
+import FacturaCompra from '@/views/facturaCompra.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -53,23 +55,34 @@ const router = createRouter({
       meta: { layout: 'WireframeLayout' }
     },
     {
+      path: '/historial-inventario',
+      name: 'historial',
+      component: HistoryInventoryView,
+      meta: { layout: 'WireframeLayout' }
+    },
+    {
+      path: '/recepcion',
+      name: 'recepcion',
+      component: ReceptionView,
+      meta: { layout: 'WireframeLayout' }
+    },
+    {
       path: '/proveedores',
       name: 'proveedores',
       component: ProviderView,
       meta: { layout: 'WireframeLayout' }
-    },   
-    {
-      path: '/facturaCompra',
-      name: 'facturaCompra',
-      component: FacturaCompra,
     },
-      {
+    {
       path: '/zona-pesaje',
       name: 'zona-pesaje',
       component: entradaSalidaProductosView,
       meta: { layout: 'WireframeLayout' }
+    },
+    {
+      path: '/facturaCompra',
+      name: 'facturaCompra',
+      component: FacturaCompra,
     }
-    
   ]
 });
 
