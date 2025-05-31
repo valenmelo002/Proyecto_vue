@@ -10,6 +10,7 @@ import ProviderView from '@/views/ProviderView.vue';
 import HistoryInventoryView from '@/views/HistoryInventoryView.vue';
 import ReceptionView from '@/views/ReceptionView.vue';
 import entradaSalidaProductosView from '@/views/imagenGramera.vue';
+import FacturaCompra from '@/views/facturaCompra.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -71,11 +72,18 @@ const router = createRouter({
       component: ProviderView,
       meta: { layout: 'WireframeLayout' }
     },
-      {
+    {
       path: '/zona-pesaje',
       name: 'zona-pesaje',
       component: entradaSalidaProductosView,
       meta: { layout: 'WireframeLayout' }
+    },
+    {
+      path: '/facturaCompra',
+      name: 'facturaCompra',
+      component: FacturaCompra,
+      meta: { layout: 'WireframeLayout' }
+
     }
   ]
 });
