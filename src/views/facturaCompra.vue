@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1>Factura de Compra</h1>
     <v-btn
       class="btn-nueva"
       color="primary"
@@ -147,7 +146,7 @@ async function handleSubmit() {
   };
 
   if (form.value.id) {
-    await facturaService.updateFactura(form.value.id as number, payload);
+    await facturaService.updateFactura(String(form.value.id), payload);
   } else {
     await facturaService.createFactura(payload);
   }
@@ -162,7 +161,7 @@ function editFactura(factura: Factura) {
 }
 
 async function deleteFactura(id: number) {
-  await facturaService.deleteFactura(id);
+  await facturaService.deleteFactura(String(id));
   await cargarFacturas();
 }
 
