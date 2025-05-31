@@ -10,7 +10,7 @@ import ProviderView from '@/views/ProviderView.vue';
 import HistoryInventoryView from '@/views/HistoryInventoryView.vue';
 import ReceptionView from '@/views/ReceptionView.vue';
 import entradaSalidaProductosView from '@/views/imagenGramera.vue';
-import FacturaCompra from '@/views/facturaCompra.vue';
+import FacturaCompra from '@/views/facturaCompra.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -82,6 +82,8 @@ const router = createRouter({
       path: '/facturaCompra',
       name: 'facturaCompra',
       component: FacturaCompra,
+      meta: { layout: 'WireframeLayout' }
+
     }
   ]
 });
