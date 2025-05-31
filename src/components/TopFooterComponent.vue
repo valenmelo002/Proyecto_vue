@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
+import { computed } from 'vue'
 
 const route = useRoute()
 
-// Extraemos el último segmento de la ruta como nombre de vista
-const viewName = route.name?.toString() || 'Vista'
+const viewName = computed( () => route.name?.toString() || 'Vista')
 </script>
 
 <template>

@@ -72,7 +72,12 @@
         to="/contacto"
         link
       />
-  
+        <v-list-item
+        prepend-icon="mdi-box"
+        title="zona-pesaje"
+        to="/zona-pesaje"
+        link
+      />
     </v-list>
   </v-navigation-drawer>
 </template>
