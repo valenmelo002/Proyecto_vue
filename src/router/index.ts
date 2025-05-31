@@ -60,7 +60,7 @@ const router = createRouter({
       component: HistoryInventoryView,
       meta: { layout: 'WireframeLayout' }
     },
-     {
+    {
       path: '/recepcion',
       name: 'recepcion',
       component: ReceptionView,
