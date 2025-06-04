@@ -1,74 +1,119 @@
 <template>
   <div class="pa-4">
-    <div class="mb-6">
-      <v-select
-        label="Producto"
-        :items="productos"
-        item-value="id"
-        item-title="nombre"
-        v-model="form.producto_id"
-        class="mb-2"
-        variant="outlined"
-      />
+    <!-- FORMULARIO CENTRADO -->
+    <v-container class="d-flex justify-center" style="max-width: 1440px;">
+      <div class="form-wrapper w-100">
+        <v-row dense>
+          <v-col cols="12" md="6">
+            <v-select
+              label="Producto"
+              :items="productos"
+              item-value="id"
+              item-title="nombre"
+              v-model="form.producto_id"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              class="w-100"
+            />
+          </v-col>
 
-      <v-select
-        label="Unidad de medida"
-        :items="unidades"
-        item-value="id"
-        item-title="nombre"
-        v-model="form.unidad_medida_id"
-        class="mb-2"
-        variant="outlined"
-      />
+          <v-col cols="12" md="6">
+            <v-select
+              label="Unidad de medida"
+              :items="unidades"
+              item-value="id"
+              item-title="nombre"
+              v-model="form.unidad_medida_id"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              class="w-100"
+            />
+          </v-col>
 
-      <v-text-field label="Cantidad" v-model.number="form.cantidad" type="number" class="mb-2" />
-      <v-textarea label="Observación" v-model="form.observacion" class="mb-4" />
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="Cantidad"
+              v-model.number="form.cantidad"
+              type="number"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              class="w-100"
+            />
+          </v-col>
 
-      <v-btn color="primary" @click="confirmDialog = true" :loading="loading" class="mr-2">
-        {{ mode === 'create' ? 'Guardar' : 'Actualizar' }}
-      </v-btn>
-      <v-btn @click="resetForm">Cancelar</v-btn>
+          <v-col cols="12" md="6">
+            <v-textarea
+              label="Observación"
+              v-model="form.observacion"
+              variant="outlined"
+              density="comfortable"
+              rows="1"
+              auto-grow
+              hide-details
+              class="w-100"
+              style="min-height: 56px;"
+            />
+          </v-col>
+        </v-row>
 
-      <ConfirmDialog
-        v-model="confirmDialog"
-        :title="mode === 'create' ? 'Confirmar creación' : 'Confirmar actualización'"
-        :message="mode === 'create'
-          ? '¿Desea registrar esta recepción?'
-          : '¿Desea actualizar esta recepción?'"
-        @confirm="submit"
-        @cancel="confirmDialog = false"
-      />
-    </div>
-
-    <v-data-table-server
-      v-model:items-per-page="itemsPerPage"
-      :headers="headers"
-      :items="serverItems"
-      :items-length="totalItems"
-      :loading="loading"
-      :search="search"
-      item-value="id"
-      @update:options="loadItems"
-    >
-      <template v-slot:item.createdAt="{ item }">
-        {{ formatDate(item.createdAt) }}
-      </template>
-
-      <template v-slot:item.acciones="{ item }">
-        <div class="d-flex ga-1">
-          <EditButtonComponent :item="item" @edit="editItem" />
-          <DeleteButtonComponent :item="item" resource="recepcion" @confirm-delete="deleteItem" />
+        <!-- BOTONES -->
+        <div class="d-flex justify-center ga-2 mt-4 mb-6">
+          <v-btn color="primary" :loading="loading" @click="handleGuardar">
+            {{ mode === 'create' ? 'Guardar' : 'Actualizar' }}
+          </v-btn>
+          <v-btn @click="resetForm" color="error">Cancelar</v-btn>
         </div>
-      </template>
+      </div>
+    </v-container>
 
-      <template v-slot:tfoot>
-        <tr>
-          <td>
-            <v-text-field v-model="folioSearch" class="ma-2" density="compact" placeholder="Buscar por folio..." hide-details />
-          </td>
-        </tr>
-      </template>
-    </v-data-table-server>
+    <!-- FILTRO Y TABLA MÁS ANCHOS -->
+    <v-container class="mx-auto" style="max-width: 1440px;">
+      <v-text-field
+        v-model="productoSearch"
+        placeholder="Buscar por nombre del producto..."
+        density="comfortable"
+        variant="outlined"
+        hide-details
+        class="mb-4"
+        style="max-width: 500px;"
+      />
+
+      <v-data-table-server
+        v-model:items-per-page="itemsPerPage"
+        :headers="headers"
+        :items="serverItems"
+        :items-length="totalItems"
+        :loading="loading"
+        :search="search"
+        item-value="id"
+        @update:options="loadItems"
+      >
+        <template v-slot:item.createdAt="{ item }">
+          {{ formatDate(item.createdAt) }}
+        </template>
+
+        <template v-slot:item.acciones="{ item }">
+          <div class="d-flex ga-1">
+            <EditButtonComponent :item="item" @edit="editItem" />
+            <DeleteButtonComponent :item="item" resource="recepcion" @confirm-delete="deleteItem" />
+          </div>
+        </template>
+      </v-data-table-server>
+    </v-container>
+
+    <!-- CONFIRM Y SNACKBAR -->
+    <ConfirmDialog
+      v-model="confirmDialog"
+      :title="mode === 'create' ? 'Confirmar creación' : 'Confirmar actualización'"
+      :message="mode === 'create'
+        ? '¿Desea registrar esta recepción?'
+        : '¿Desea actualizar esta recepción?'"
+      @confirm="submit"
+      @cancel="confirmDialog = false"
+    />
 
     <v-snackbar
       v-model="snackbar.show"
@@ -109,7 +154,7 @@ const serverItems = ref([])
 const totalItems = ref(0)
 const loading = ref(false)
 const search = ref('')
-const folioSearch = ref('')
+const productoSearch = ref('')
 const currentOptions = ref({
   page: 1,
   itemsPerPage: 5,
@@ -162,7 +207,7 @@ function resetForm() {
   mode.value = 'create'
 }
 
-async function submit() {
+function handleGuardar() {
   if (
     !form.value.producto_id ||
     !form.value.unidad_medida_id ||
@@ -174,10 +219,13 @@ async function submit() {
       message: 'Por favor completa todos los campos obligatorios con datos válidos.',
       color: 'error',
     }
-    confirmDialog.value = false
     return
   }
 
+  confirmDialog.value = true
+}
+
+async function submit() {
   confirmDialog.value = false
   loading.value = true
   try {
@@ -255,13 +303,15 @@ function loadItems(options: any) {
     page: options.page,
     itemsPerPage: options.itemsPerPage,
     sortBy: options.sortBy,
-    search: { folio: folioSearch.value },
+    search: {
+      producto: productoSearch.value,
+    },
   })
     .then(({ items, total }) => {
       serverItems.value = items
       totalItems.value = total
     })
-    .catch((error) => {
+    .catch(() => {
       snackbar.value = {
         show: true,
         message: 'Error al cargar recepciones',
@@ -273,8 +323,8 @@ function loadItems(options: any) {
     })
 }
 
-watch(folioSearch, () => {
-  search.value = Date.now().toString()
+watch(productoSearch, () => {
+  loadItems(currentOptions.value)
 })
 
 onMounted(() => {
@@ -288,4 +338,8 @@ function formatDate(dateString: string) {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+::v-deep(.v-input input) {
+  border: none !important;
+}
+</style>
