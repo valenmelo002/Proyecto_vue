@@ -1,6 +1,6 @@
 <template>
   <div class="pa-4">
-    <!-- FORMULARIO CENTRADO -->
+
     <v-container class="d-flex justify-center" style="max-width: 1440px;">
       <div class="form-wrapper w-100">
         <v-row dense>
@@ -59,7 +59,6 @@
           </v-col>
         </v-row>
 
-        <!-- BOTONES -->
         <div class="d-flex justify-center ga-2 mt-4 mb-6">
           <v-btn color="primary" :loading="loading" @click="handleGuardar">
             {{ mode === 'create' ? 'Guardar' : 'Actualizar' }}
@@ -69,7 +68,6 @@
       </div>
     </v-container>
 
-    <!-- FILTRO Y TABLA MÁS ANCHOS -->
     <v-container class="mx-auto" style="max-width: 1440px;">
       <v-text-field
         v-model="productoSearch"
@@ -104,7 +102,6 @@
       </v-data-table-server>
     </v-container>
 
-    <!-- CONFIRM Y SNACKBAR -->
     <ConfirmDialog
       v-model="confirmDialog"
       :title="mode === 'create' ? 'Confirmar creación' : 'Confirmar actualización'"

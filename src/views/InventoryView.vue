@@ -1,188 +1,342 @@
 <template>
   <div class="pa-4">
-    <!-- FORMULARIO -->
-    <div class="mb-6">
-      <v-text-field label="Código" v-model="form.codigo" class="mb-2" />
-      <v-text-field label="Nombre del Producto" v-model="form.nombre_producto" />
-      <v-text-field label="Categoría" v-model="form.categoria" class="mb-2" />
-      <v-text-field label="Stock" v-model.number="form.stock" type="number" class="mb-2" />
-      <v-text-field label="Stock Mínimo" v-model.number="form.min_stock" type="number" />
-      <v-text-field label="Unidad de Medida" v-model="form.unidad_medida" />
 
-      <v-btn color="primary" @click="confirmDialog = true" :loading="loading" class="mr-2">
-        {{ mode === 'create' ? 'Guardar' : 'Actualizar' }}
-      </v-btn>
-      <v-btn @click="resetForm">Cancelar</v-btn>
+    <v-container class="d-flex justify-center" style="max-width: 1440px;">
+      <div class="form-wrapper w-100">
+        <v-row dense>
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="Código"
+              v-model="form.codigo"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              class="w-100"
+            />
+          </v-col>
 
-      <!-- Modal de confirmación para guardar/actualizar -->
-      <ConfirmDialog
-        v-model="confirmDialog"
-        :title="mode === 'create' ? 'Confirmar creación' : 'Confirmar actualización'"
-        :message="mode === 'create'
-            ? '¿Desea guardar este producto en el inventario?'
-            : '¿Desea actualizar la información de este producto?'"
-        @confirm="submit"
-        @cancel="confirmDialog = false"
-      />
-    </div>
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="Nombre del Producto"
+              v-model="form.nombre_producto"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              class="w-100"
+            />
+          </v-col>
 
-    <!-- TABLA -->
-    <v-data-table-server
-      v-model:items-per-page="itemsPerPage"
-      :headers="headers"
-      :items="serverItems"
-      :items-length="totalItems"
-      :loading="loading"
-      :search="search"
-      item-value="codigo"
-      @update:options="loadItems"
-    >
-      <template v-slot:item.acciones="{ item }">
-        <div class="d-flex ga-1">
-          <EditButtonComponent :item="item" @edit="editItem" />
-          <DeleteButtonComponent
-            :item="item"
-            resource="producto"
-            @confirm-delete="deleteItem"
-          />
+          <v-col cols="12" md="6">
+            <v-select
+              label="Categoría"
+              v-model="form.categoria"
+              :items="categorias"
+              item-title="nombre"
+              item-value="id"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              class="w-100"
+            />
+          </v-col>
+
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="Stock"
+              v-model="form.stock"
+              type="number"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              class="w-100"
+            />
+          </v-col>
+
+          <v-col cols="12" md="6">
+            <v-text-field
+              label="Stock Mínimo"
+              v-model="form.min_stock"
+              type="number"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              class="w-100"
+            />
+          </v-col>
+
+          <v-col cols="12" md="6">
+            <v-select
+              label="Unidad de Medida"
+              v-model="form.unidad_medida"
+              :items="unidadesMedida"
+              item-title="nombre"
+              item-value="id"
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              class="w-100"
+            />
+          </v-col>
+        </v-row>
+
+        <div class="d-flex justify-center ga-2 mt-4 mb-6">
+          <v-btn color="primary" @click="validarFormulario" :loading="loading">
+            {{ form.id ? 'Actualizar' : 'Guardar' }}
+          </v-btn>
         </div>
-      </template>
 
-      <template v-slot:tfoot>
-        <tr>
-          <td>
-            <v-text-field v-model="name" class="ma-2" density="compact" placeholder="Buscar por nombre..." hide-details />
-          </td>
-        </tr>
+        <ConfirmDialog
+          v-model="confirmDialog"
+          :title="form.id ? 'Confirmar actualización' : 'Confirmar creación'"
+          :message="form.id ? '¿Desea actualizar este inventario?' : '¿Desea guardar este inventario?'"
+          @confirm="submit"
+          @cancel="confirmDialog = false"
+        />
+      </div>
+    </v-container>
+
+
+    <v-container class="mx-auto" style="max-width: 1440px;">
+      <v-text-field
+        v-model="search"
+        label="Buscar por nombre"
+        clearable
+        density="comfortable"
+        variant="outlined"
+        hide-details
+        class="mb-4"
+        style="max-width: 500px;"
+      />
+
+      <!-- TABLA -->
+      <v-data-table-server
+        v-model:page="pagination.page"
+        v-model:items-per-page="pagination.itemsPerPage"
+        :headers="headers"
+        :items-length="filteredItems.length"
+        :items="filteredItems"
+        :loading="loading"
+        item-value="id"
+        class="elevation-1"
+      >
+        <template v-slot:item.categoria="{ item }">
+          {{ item.categoria?.nombre }}
+        </template>
+        <template v-slot:item.unidadMedida="{ item }">
+          {{ item.unidadMedida?.nombre }}
+        </template>
+        <template v-slot:item.acciones="{ item }">
+          <div class="d-flex ga-1">
+            <EditButtonComponent :item="item" @edit="editar" />
+            <DeleteButtonComponent :item="item" resource="inventario" @confirm-delete="eliminar" />
+          </div>
+        </template>
+      </v-data-table-server>
+    </v-container>
+
+    <!-- SNACKBAR -->
+    <v-snackbar v-model="snackbar.show" :timeout="3000" :color="snackbar.color" top right elevation="2">
+      {{ snackbar.message }}
+      <template #actions>
+        <v-btn text @click="snackbar.show = false">Cerrar</v-btn>
       </template>
-    </v-data-table-server>
+    </v-snackbar>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import InventarioService from '@/services/InventarioService'
-import ConfirmDialog from '@/components/ModalComponent.vue'
+import CategoriaService from '@/services/CategoriaService'
+import UnidadMedidaService from '@/services/UnidadMedidaService'
 import EditButtonComponent from '@/components/button/EditComponent.vue'
 import DeleteButtonComponent from '@/components/button/DeleteComponent.vue'
+import ConfirmDialog from '@/components/ModalComponent.vue'
 
-// Columnas de la tabla
-const headers = ref([
-  { title: 'Código', key: 'codigo' },
-  { title: 'Nombre', key: 'nombreProducto' },
-  { title: 'Categoría', key: 'categoria' },
-  { title: 'Stock', key: 'stock' },
-  { title: 'Stock Mínimo', key: 'minStock' },
-  { title: 'Unidad', key: 'unidadMedida' },
-  { title: 'Acciones', key: 'acciones', sortable: false }
-])
 
-// Estados
-const itemsPerPage = ref(5)
-const serverItems = ref([])
-const totalItems = ref(0)
-const loading = ref(false)
-const name = ref('')
-const search = ref('')
-const currentOptions = ref({
-  page: 1,
-  itemsPerPage: 5,
-  sortBy: [],
-})
-
-// Formulario
-const mode = ref<'create' | 'update'>('create')
 const form = ref({
   id: null,
   codigo: '',
   nombre_producto: '',
-  categoria: '',
+  categoria: null,
   stock: '',
   min_stock: '',
-  unidad_medida: '',
+  unidad_medida: null,
 })
-const confirmDialog = ref(false)
 
-// Métodos
-function resetForm() {
-  form.value = {
-    id: null,
-    codigo: '',
-    nombre_producto: '',
-    categoria: '',
-    stock: '',
-    min_stock: '',
-    unidad_medida: '',
-  }
-  mode.value = 'create'
+const categorias = ref([])
+const unidadesMedida = ref([])
+
+interface InventarioItem {
+  id: number
+  codigo: string
+  nombre_producto: string
+  categoria?: { id: number; nombre: string }
+  stock: number
+  min_stock: number
+  unidadMedida?: { id: number; nombre: string }
 }
 
-async function submit() {
-  confirmDialog.value = false
-  loading.value = true
+const items = ref<InventarioItem[]>([])
+const totalItems = ref(0)
+const loading = ref(false)
 
+const pagination = ref({
+  page: 1,
+  itemsPerPage: 5,
+})
+
+const headers = [
+  { title: 'Código', key: 'codigo' },
+  { title: 'Nombre Producto', key: 'nombreProducto' },
+  { title: 'Categoría', key: 'categoria' },
+  { title: 'Stock', key: 'stock' },
+  { title: 'Stock Mínimo', key: 'minStock' },
+  { title: 'Unidad de Medida', key: 'unidadMedida' },
+  { title: 'Acciones', key: 'acciones', sortable: false },
+]
+
+const search = ref('')
+const confirmDialog = ref(false)
+const mode = ref<'create' | 'update'>('create')
+
+const filteredItems = computed(() => {
+  if (!search.value) return items.value
+  return items.value.filter(item => {
+    const nombre = item.nombre_producto ?? item.nombreProducto ?? ''
+    return nombre.toLowerCase().includes(search.value.toLowerCase())
+  })
+})
+
+// Snackbar
+const snackbar = ref({
+  show: false,
+  message: '',
+  color: 'success',
+})
+
+const showMessage = (msg: string) => {
+  snackbar.value.message = msg
+  snackbar.value.color = 'success'
+  snackbar.value.show = true
+}
+
+const showError = (msg: string) => {
+  snackbar.value.message = msg
+  snackbar.value.color = 'error'
+  snackbar.value.show = true
+}
+
+// Validar campos antes de abrir el modal
+const validarFormulario = () => {
+  const camposObligatorios = [
+    form.value.codigo,
+    form.value.nombre_producto,
+    form.value.categoria,
+    form.value.stock,
+    form.value.min_stock,
+    form.value.unidad_medida,
+  ]
+
+  const hayCampoVacio = camposObligatorios.some(campo => campo === null || campo === '')
+
+  if (hayCampoVacio) {
+    showError('Por favor completa todos los campos obligatorios')
+    return
+  }
+
+  confirmDialog.value = true
+}
+
+const loadInventarios = async () => {
+  loading.value = true
   try {
-    if (mode.value === 'create') {
-      await InventarioService.create(form.value)
-    } else {
-      await InventarioService.update(form.value.id, form.value)
+    const paginationParams = {
+      page: 1,
+      itemsPerPage: 10,
+      sortBy: [],
+      search: {},
     }
-    resetForm()
-    loadItems(currentOptions.value)
-  } catch (e) {
-    console.error('Error al guardar:', e)
+
+    const res = await InventarioService.getPaginated(paginationParams)
+    items.value = res.items
+    totalItems.value = res.total
+  } catch (err) {
+    console.error('Error cargando inventarios:', err)
   } finally {
     loading.value = false
   }
 }
 
-function editItem(item: any) {
+const submit = async () => {
+  confirmDialog.value = false
+  loading.value = true
+  try {
+    const data = {
+      codigo: form.value.codigo,
+      nombre_producto: form.value.nombre_producto,
+      categoria_id: form.value.categoria,
+      stock: form.value.stock,
+      min_stock: form.value.min_stock,
+      unidad_medida_id: form.value.unidad_medida,
+    }
+
+    if (form.value.id) {
+      await InventarioService.update(form.value.id, data)
+      showMessage('Actualizado con éxito')
+    } else {
+      await InventarioService.create(data)
+      showMessage('Agregado con éxito')
+    }
+
+    resetForm()
+    loadInventarios()
+  } catch (err) {
+    console.error('Error al guardar:', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+const editar = (item: any) => {
   form.value = {
     id: item.id,
     codigo: item.codigo,
     nombre_producto: item.nombreProducto,
-    categoria: item.categoria,
+    categoria: item.categoria?.id,
     stock: item.stock,
     min_stock: item.minStock,
-    unidad_medida: item.unidadMedida,
+    unidad_medida: item.unidadMedida?.id,
   }
   mode.value = 'update'
-  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-async function deleteItem(item: { id: number }) {
+const eliminar = async (item: { id: number }) => {
   try {
     await InventarioService.destroy(item.id)
-    loadItems(currentOptions.value)
-  } catch (error) {
-    console.error('Error al eliminar el producto:', error)
+    showMessage('Eliminado con éxito')
+    loadInventarios()
+  } catch (err) {
+    console.error('Error al eliminar:', err)
   }
 }
 
-function loadItems(options: any) {
-  currentOptions.value = options
-  loading.value = true
-
-  InventarioService.getPaginated({
-    page: options.page,
-    itemsPerPage: options.itemsPerPage,
-    sortBy: options.sortBy,
-    search: { name: name.value },
-  })
-    .then(({ items, total }) => {
-      serverItems.value = items
-      totalItems.value = total
-    })
-    .catch((error) => {
-      console.error('Error al cargar inventario:', error)
-    })
-    .finally(() => {
-      loading.value = false
-    })
+const resetForm = () => {
+  form.value = {
+    id: null,
+    codigo: '',
+    nombre_producto: '',
+    categoria: null,
+    stock: '',
+    min_stock: '',
+    unidad_medida: null,
+  }
+  mode.value = 'create'
 }
 
-// Filtro por nombre reactivo
-watch(name, () => {
-  search.value = Date.now().toString()
+onMounted(async () => {
+  loadInventarios()
+  categorias.value = await CategoriaService.getAll()
+  unidadesMedida.value = await UnidadMedidaService.getAll()
 })
 </script>
