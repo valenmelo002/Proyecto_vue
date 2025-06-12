@@ -11,8 +11,12 @@
       item-value="id"
       @update:options="loadItems"
     >
-      <template v-slot:item.producto="{ item }">
+      <template v-slot:item.producto="{ item }: { item: { producto?: { nombre?: string } } }">
         {{ item.producto?.nombre ?? 'Sin nombre' }}
+      </template>
+
+      <template v-slot:item.fecha="{ item }">
+        {{ new Date(item.fecha).toISOString().slice(0, 10) }}
       </template>
 
       <template v-slot:tfoot>
@@ -81,7 +85,6 @@ function loadItems(options: any) {
     })
 }
 
-// Filtro por nombre reactivo
 watch(name, () => {
   search.value = Date.now().toString()
 })

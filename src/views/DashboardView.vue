@@ -1,6 +1,6 @@
 <template>
   <v-container class="py-6">
-    <!-- Encabezado -->
+
     <v-row justify="center">
       <v-col cols="12" md="8" class="text-center">
         <h1 class="text-h4 font-weight-bold">Bienvenido a la Plataforma</h1>
@@ -8,7 +8,6 @@
       </v-col>
     </v-row>
 
-   <!-- Tarjetas dinámicas -->
 <v-row class="mt-6 g-4" justify="center" align="stretch">
   <v-col cols="12" md="6" v-for="card in dashboardCards" :key="card.title">
     <v-card
@@ -35,8 +34,6 @@
   </v-col>
 </v-row>
 
-
-    <!-- Tabla de pedidos recientes -->
     <v-row class="mt-10">
       <v-col cols="12">
         <v-card elevation="8" class="pa-4">
@@ -87,7 +84,7 @@ onBeforeUnmount(() => {
   clearInterval(intervalDashboard)
 })
 
-// Pedidos recientes simulados
+
 const headers = [
   { title: 'ID', key: 'id' },
   { title: 'Cliente', key: 'cliente' },

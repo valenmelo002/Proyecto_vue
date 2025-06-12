@@ -84,6 +84,7 @@ export default class RecepcionService {
     search = {} as { producto?: string }
   }) {
     const token = localStorage.getItem("token")
+    console.log('TOKEN QUE SE ESTÁ USANDO:', token)
     const sortKey = sortBy[0]?.key ?? 'fecha'
     const order = sortBy[0]?.order ?? 'asc'
 
