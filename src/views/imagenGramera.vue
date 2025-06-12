@@ -95,16 +95,19 @@
         </v-col>
       </v-row>
       
-      <v-btn
-        :color="modoEdicion ? 'warning' : 'success'"
-        class="my-4"
-        style="width: 150px; display: block; margin-left: auto; margin-right: auto;"
-        @click="modoEdicion ? actualizarRegistro() : guardarPeso()"
-        :disabled="cargando || !textoReconocido"
-        :loading="guardando"
-      >
-        {{ modoEdicion ? 'Actualizar Registro' : 'Guardar Peso' }}
-      </v-btn>
+   <div class="d-flex justify-center">
+  <v-btn
+    :color="modoEdicion ? 'warning' : 'success'"
+    class="my-4"
+    width="280"
+    @click="modoEdicion ? actualizarRegistro() : guardarPeso()"
+    :disabled="cargando || !textoReconocido"
+    :loading="guardando"
+  >
+    {{ modoEdicion ? 'Actualizar Registro' : 'Guardar Peso' }}
+     </v-btn>
+    </div>
+
       
       <v-alert
         v-if="mensaje"
