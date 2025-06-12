@@ -12,7 +12,6 @@ export async function procesarImagenService(imagen: File): Promise<any> {
   );
   return response.data;
 }
-
 export async function obtenerPesoService(
   id: number,
   valor: number,
@@ -77,10 +76,19 @@ export async function obtenerRegistroPorId(id: number): Promise<any> {
 }
 
 export async function obtenerImagenRegistro(id: number): Promise<string> {
-  const response = await axios.get(`${API_BASE_URL}/${id}`, {
-    responseType: 'blob'
-  });
-  return URL.createObjectURL(response.data);
+  try {
+    const response = await axios.get(`${API_BASE_URL}/${id}/imagen`, {
+      responseType: 'blob'
+    });
+    
+    const blob = response.data;
+    const urlTemporal = URL.createObjectURL(blob);
+    
+    return urlTemporal;
+  } catch (error) {
+    console.error('Error al obtener imagen:', error);
+    throw error;
+  }
 }
 
 export async function actualizarRegistroOCR(id: number, registro: {
@@ -105,7 +113,7 @@ export async function actualizarRegistroOCR(id: number, registro: {
     formData,
     {
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'multipart/form-data'
       }
     }
   );

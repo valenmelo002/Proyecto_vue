@@ -1,6 +1,6 @@
 <template>
   <v-container class="py-8" style="background-color: #fff; min-height: 100%;">
-    <v-card class="mx-auto pa-4" max-width="1500">
+    <v-card class="mx-auto pa-4" max-width="1050">
       <v-card-title class="text-h5 mb-4">
         {{ modoEdicion ? 'Editar Registro' : 'Reconocimiento de Peso por Imagen' }}
       </v-card-title>
@@ -310,6 +310,7 @@ async function actualizarRegistro() {
   }
 }
 
+// FUNCIÓN ACTUALIZADA PARA CARGAR IMAGEN:
 async function manejarEdicionDesdeTabla(registro: any) {
   try {
     // Activar modo edición
@@ -328,23 +329,23 @@ async function manejarEdicionDesdeTabla(registro: any) {
       URL.revokeObjectURL(imagenUrl.value);
     }
     
-    // Intentar cargar la imagen del registro
+    // CARGAR LA IMAGEN DEL REGISTRO
     if (registro.id) {
       cargando.value = true;
       try {
         const urlImagen = await obtenerImagenRegistro(registro.id);
-        imagenUrl.value = urlImagen;
+        imagenUrl.value = urlImagen; // ← ESTO hace que aparezca en v-img
+        mostrarMensaje("Imagen cargada correctamente", "success");
       } catch (error) {
         console.log("No se pudo cargar la imagen del registro:", error);
         imagenUrl.value = "";
+        mostrarMensaje("Registro sin imagen asociada", "info");
       } finally {
         cargando.value = false;
       }
     }
     
     mostrarMensaje(`Editando registro ID: ${registro.id}`, "info");
-    
-    // Hacer scroll hacia arriba para mostrar el formulario
     window.scrollTo({ top: 0, behavior: 'smooth' });
     
   } catch (error) {
