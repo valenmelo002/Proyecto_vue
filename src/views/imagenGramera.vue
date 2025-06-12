@@ -97,8 +97,8 @@
       
       <v-btn
         :color="modoEdicion ? 'warning' : 'success'"
-        class="my-2"
-        block
+        class="my-4"
+        style="width: 150px; display: block; margin-left: auto; margin-right: auto;"
         @click="modoEdicion ? actualizarRegistro() : guardarPeso()"
         :disabled="cargando || !textoReconocido"
         :loading="guardando"
