@@ -61,6 +61,12 @@
         link
       />
       <v-list-item
+        prepend-icon="mdi-cash-multiple"
+        title="Cajero"
+        to="/cajero"
+        link
+      />
+      <v-list-item
         prepend-icon="mdi-phone"
         title="Contacto"
         to="/contacto"

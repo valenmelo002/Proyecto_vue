@@ -76,6 +76,12 @@ const router = createRouter({
       name: 'zona-pesaje',
       component: entradaSalidaProductosView,
       meta: { layout: 'WireframeLayout' }
+    },
+    {
+      path: '/cajero',
+      name: 'cajero',
+      component: () => import('@/views/CashierView.vue'),
+      meta: { layout: 'WireframeLayout' }
     }
   ]
 });
