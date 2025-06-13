@@ -10,6 +10,7 @@ import ProviderView from '@/views/ProviderView.vue';
 import HistoryInventoryView from '@/views/HistoryInventoryView.vue';
 import ReceptionView from '@/views/ReceptionView.vue';
 import entradaSalidaProductosView from '@/views/imagenGramera.vue';
+import PerfilView from '@/views/PerfilView.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -34,6 +35,12 @@ const router = createRouter({
       name: 'restore',
       component: RestoreView,
       meta: { layout: 'AuthLayout' }
+    },
+      {
+      path: '/perfil',
+      name: 'perfil',
+      component: PerfilView,
+      meta: { layout: 'WireframeLayout' }
     },
     {
       path: '/dashboard',
@@ -81,6 +88,12 @@ const router = createRouter({
       path: '/cajero',
       name: 'cajero',
       component: () => import('@/views/CashierView.vue'),
+      meta: { layout: 'WireframeLayout' }
+    },
+    {
+      path: '/Mesas',
+      name: 'mesas',
+      component: () => import('@/views/TablesView.vue'),
       meta: { layout: 'WireframeLayout' }
     }
   ]

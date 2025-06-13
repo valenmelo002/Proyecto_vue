@@ -2,7 +2,6 @@ const API_URL = "http://localhost:3333/inventario"
 
 export default class InventarioService {
   static async getToken() {
-    // Reemplaza esto con tu sistema de almacenamiento real del token
     return localStorage.getItem("token")
   }
 
@@ -54,6 +53,19 @@ export default class InventarioService {
     return response.json()
   }
 
+  static async put(id: number, data: Record<string, any>) {
+    const token = await this.getToken()
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    })
+    return response.json()
+  }
+
   static async destroy(id: number) {
     const token = await this.getToken()
     const response = await fetch(`${API_URL}/${id}`, {
@@ -62,18 +74,18 @@ export default class InventarioService {
         Authorization: `Bearer ${token}`,
       },
     })
-    return response.status === 204 // Devuelve true si se eliminó con éxito
+    return response.status === 204
   }
 
   static async getPaginated({
     page = 1,
     itemsPerPage = 10,
-    sortBy = [] as { key: string; order: 'asc' | 'desc'}[],
-    search = {} as { name?: string }
+    sortBy = [] as { key: string; order: 'asc' | 'desc' }[],
+    search = {} as { nombre?: string }
   }) {
     const token = localStorage.getItem("token")
-    const sortKey = sortBy[0]?.key ?? 'nombre_producto'
-    const order = sortBy[0]?.order ?? 'asc'
+    const sortKey = sortBy[0]?.key ?? 'created_at'
+    const order = sortBy[0]?.order ?? 'desc'
 
     const params = new URLSearchParams({
       page: page.toString(),
@@ -82,8 +94,8 @@ export default class InventarioService {
       order,
     })
 
-    if (search.name) {
-      params.append('nombre_producto', search.name)
+    if (search.nombre) {
+      params.append('nombre', search.nombre)
     }
 
     const response = await fetch(`${API_URL}?${params.toString()}`, {
@@ -95,14 +107,13 @@ export default class InventarioService {
     })
 
     if (!response.ok) {
-      throw new Error('Error al obtener los materiales de soporte')
+      throw new Error('Error al obtener inventarios')
     }
 
     const result = await response.json()
     return {
       items: result.data,
-      total: result.total
+      total: result.total,
     }
   }
-
 }

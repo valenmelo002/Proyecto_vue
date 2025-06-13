@@ -16,76 +16,74 @@ const handlerLogin = () => {
       password: password.value,
     })
   }
-} 
+}
 </script>
 
 <template>
-  <div class="container">
-    <div class="form-container">
-      <h1>Ingresar</h1>
-      <form @submit.prevent="handlerLogin">
-        <input type="text" v-model="email" id="email" name="email" placeholder="email"/>
-        <input type="password" v-model="password" placeholder="Contraseña" />
-        <button type="submit">Iniciar sesion</button>
+  <div
+    style="
+      max-width:500px;
+      margin: 60px auto 0 auto;
+      display: flex;
+      justify-content: flex-end;
+    "
+  >
+    <v-card
+      class="pa-6"
+      style="
+        width:550px;
+        background-color: #fafafa;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      "
+    >
+      <h1 class="text-h4 text-center mb-6" style="font-weight: 700">Ingresar</h1>
 
-        <p><Router-link to="/Restore">¿Has olvidado tu contraseña?</Router-link></p>
-        <p><Router-link to="/Register">Regístrate ahora</Router-link></p>
-      </form>
-    </div>
+      <v-form @submit.prevent="handlerLogin">
+        <v-text-field
+          v-model="email"
+          label="Email"
+          type="text"
+          variant="outlined"
+          density="comfortable"
+          class="mb-4"
+          style="font-size: 24px; width: 100%"
+          input-style="font-size: 24px; height: 64px;"
+        />
+        <v-text-field
+          v-model="password"
+          label="Contraseña"
+          type="password"
+          variant="outlined"
+          density="comfortable"
+          class="mb-6"
+          style="font-size: 24px; width: 100%"
+          input-style="font-size: 24px; height: 64px;"
+        />
+        <v-btn
+          type="submit"
+          block
+          style="background-color: #bb71e8; color: white; font-size: 20px; padding: 18px 0; border-radius: 12px;"
+        >
+          Iniciar sesión
+        </v-btn>
+
+        <div class="text-center mt-8" style="font-size: 16px">
+          <p class="mb-3">
+            <RouterLink to="/Restore" class="text-decoration-underline" style="color: #555">
+              ¿Has olvidado tu contraseña?
+            </RouterLink>
+          </p>
+          <p>
+            <RouterLink to="/Register" class="text-decoration-underline" style="color: #555">
+              Regístrate ahora
+            </RouterLink>
+          </p>
+        </div>
+      </v-form>
+    </v-card>
   </div>
 </template>
 
-<style>
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.form-container {
-  width: 400px;
-  padding: 40px;
-  background: #fafafa;
-  border-radius: 10px;
-}
-
-h1 {
-  text-align: center;
-  color: black;
-  margin-bottom: 10px;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-}
-
-input {
-  background-color: #fafafa;
-  margin-bottom: 10px;
-  padding: 10px;
-  border: 1px solid black;
-  border-radius: 4px;
-  font-size: 12px;
-}
-
-button {
-  background: #bb71e8;
-  color: white;
-  padding: 15px;
-  border: none;
-  border-radius: 8px;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-p {
-  text-align: center;
-  font-size: 14px;
-  margin-top: 20px;
-}
-
-button:hover {
-  background-color: #a24edf;
-}
+<style scoped>
 </style>

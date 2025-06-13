@@ -7,8 +7,8 @@ export default class AuthService {
               },
             body: JSON.stringify({correo:correo, password:password}),
         })
-        
-        
+
+
         return response.json()
     }
 }

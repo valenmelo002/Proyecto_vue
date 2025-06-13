@@ -21,7 +21,7 @@
       </v-card>
 
       <!-- Registrador Pago -->
-      <v-card class="mb-4 pa-4">
+      <v-card class="mb-4 pa-4">  
         <h4 class="text-subtitle-1 font-weight-bold mb-2">Registrador Pago</h4>
         <div class="d-flex justify-space-between">
           <div>
