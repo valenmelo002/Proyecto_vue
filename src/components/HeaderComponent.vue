@@ -1,6 +1,6 @@
 <template>
   <div class="logo-wrapper">
-    <img alt="fuego" class="logo" src="@/assets/fuego.jpeg" />
+    <img alt="fuego" class="logo" src="@/assets/morichal.jpg" />
   </div>
 </template>
 
@@ -14,8 +14,8 @@
 }
 
 .logo {
-  width: 250px;
-  height: auto;
+  width: 420px;
+  height:350px;
   object-fit: contain;
 }
 </style>

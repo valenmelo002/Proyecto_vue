@@ -1,5 +1,6 @@
 <template>
   <div class="pa-4">
+    <!-- FORMULARIO -->
     <v-container class="d-flex justify-center" style="max-width: 1440px;">
       <div class="form-wrapper w-100">
         <v-row dense>
@@ -78,14 +79,10 @@
         </v-row>
 
         <div class="d-flex justify-center ga-2 mt-4 mb-6">
-          <v-btn
-            color="primary"
-            @click="handleClickGuardar"
-            :loading="loading"
-          >
+          <v-btn color="primary" @click="handleClickGuardar" :loading="loading">
             {{ mode === 'create' ? 'Guardar' : 'Actualizar' }}
           </v-btn>
-          <v-btn @click="resetForm" class="ml-2">Cancelar</v-btn>
+            <v-btn color="error" @click="resetForm" class="ml-2">Cancelar</v-btn>
         </div>
 
         <ConfirmDialog
@@ -100,6 +97,7 @@
       </div>
     </v-container>
 
+    <!-- BUSCADOR -->
     <v-container class="mx-auto" style="max-width: 1440px;">
       <v-text-field
         v-model="name"
@@ -108,10 +106,13 @@
         density="comfortable"
         variant="outlined"
         hide-details
-        class="mb-4"
+        class="mb-4 mx-auto"
         style="max-width: 500px;"
       />
+    </v-container>
 
+    <!-- TABLA (DESKTOP) -->
+    <v-container class="d-none d-md-block" style="max-width: 1440px;">
       <v-data-table-server
         v-model:items-per-page="itemsPerPage"
         :headers="headers"
@@ -134,6 +135,32 @@
           </div>
         </template>
       </v-data-table-server>
+    </v-container>
+
+    <!-- TARJETAS (MÓVIL) -->
+    <v-container class="d-md-none px-2">
+      <v-row dense>
+        <v-col cols="12" v-for="item in serverItems" :key="item.id">
+          <v-card class="mb-2">
+            <v-card-title class="text-h6">{{ item.nombre }}</v-card-title>
+            <v-card-subtitle class="text-caption">{{ item.descripcion }}</v-card-subtitle>
+            <v-card-text>
+              <div><strong>Precio:</strong> ${{ item.precio }}</div>
+              <div><strong>Categoría:</strong> {{ item.categoria?.nombre }}</div>
+              <div><strong>Unidad:</strong> {{ item.unidadMedida?.nombre }}</div>
+              <div><strong>Disponible:</strong> {{ item.disponible ? 'Sí' : 'No' }}</div>
+            </v-card-text>
+            <v-card-actions>
+              <EditButtonComponent :item="item" @edit="editItem" />
+              <DeleteButtonComponent
+                :item="item"
+                resource="producto"
+                @confirm-delete="deleteItem"
+              />
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
     </v-container>
 
     <!-- SNACKBAR -->
@@ -322,7 +349,6 @@ function loadItems(options: any) {
 watch(name, () => {
   search.value = Date.now().toString()
 })
-
 onMounted(() => {
   loadItems(currentOptions.value)
   loadSelects()

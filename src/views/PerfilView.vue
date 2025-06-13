@@ -44,7 +44,7 @@
         />
 
         <v-btn
-          color="purple-darken-3"
+          color="#1867C0"
           variant="flat"
           size="large"
           block
@@ -63,7 +63,7 @@
     <!-- Modal cambiar contraseña -->
     <div class="text-center mt-4">
       <span
-        class="text-purple-darken-3 font-weight-medium"
+        class="text-#1867C0 font-weight-medium"
         style="cursor: pointer;"
         @click="abrirModal"
       >
@@ -99,7 +99,7 @@
         <v-card-actions>
           <v-spacer />
           <v-btn text @click="cerrarModal">Cancelar</v-btn>
-          <v-btn color="purple-darken-3" @click="cambiarPassword">Guardar</v-btn>
+          <v-btn color="#1867C0" @click="cambiarPassword">Guardar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

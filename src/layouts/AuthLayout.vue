@@ -38,6 +38,6 @@ import FooterComponent from '@/components/FooterComponent.vue'
 
 /* Formulario con ancho fijo */
 .form-container {
-  width:500px;
+  width:600px;
 }
 </style>

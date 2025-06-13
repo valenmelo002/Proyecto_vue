@@ -1,5 +1,14 @@
 <template>
-  <v-navigation-drawer expand-on-hover rail app color="deep-purple">
+  <v-navigation-drawer
+    v-model="internalDrawer"
+    :permanent="isDesktop"
+    :temporary="!isDesktop"
+    expand-on-hover
+    rail
+    app
+    color="#2e2e2e"
+  >
+    <!-- Datos del usuario -->
     <v-list>
       <v-list-item
         :prepend-avatar="userData?.avatar"
@@ -8,9 +17,12 @@
       />
     </v-list>
 
-    <!-- Menú lateral -->
+    <!-- Enlace al perfil -->
     <v-list-item prepend-icon="mdi-account-circle" title="Perfil" to="/perfil" link />
-    <v-divider />
+
+    <v-divider class="my-2" />
+
+    <!-- Menú principal -->
     <v-list density="compact" nav>
       <v-list-item prepend-icon="mdi-home" title="Dashboard" to="/dashboard" link />
       <v-list-item prepend-icon="mdi-clipboard-list" title="Inventario" to="/inventario" link />
@@ -18,13 +30,40 @@
       <v-list-item prepend-icon="mdi-view-list" title="Historial" to="/historial-inventario" link />
       <v-list-item prepend-icon="mdi-truck" title="Recepción" to="/recepcion" link />
       <v-list-item prepend-icon="mdi-account-group" title="Proveedores" to="/proveedores" link />
-      <v-list-item prepend-icon="mdi-box" title="zona-pesaje" to="/zona-pesaje" link />
+      <v-list-item prepend-icon="mdi-scale-balance" title="Zona Pesaje" to="/zona-pesaje" link />
     </v-list>
   </v-navigation-drawer>
 </template>
 
 <script setup lang="ts">
-import { inject } from 'vue'
+import { inject, ref, watch, onMounted, onBeforeUnmount } from 'vue'
 
+// Props: recibe control desde el layout
+const props = defineProps<{ drawer: boolean }>()
+const internalDrawer = ref(props.drawer)
+watch(() => props.drawer, (val) => (internalDrawer.value = val))
+
+// Determinar si es pantalla de escritorio
+const isDesktop = ref(window.innerWidth >= 1280)
+const handleResize = () => {
+  isDesktop.value = window.innerWidth >= 1280
+  if (!isDesktop.value) internalDrawer.value = false
+  else internalDrawer.value = true
+}
+
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize)
+})
+
+// Usuario desde provide
 const userData = inject('userData')
 </script>
+
+<style scoped>
+.v-navigation-drawer {
+  border-right: 1px solid #eee;
+}
+</style>

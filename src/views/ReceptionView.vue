@@ -1,10 +1,10 @@
 <template>
   <div class="pa-4">
-
-    <v-container class="d-flex justify-center" style="max-width: 1440px;">
+    <!-- FORMULARIO RESPONSIVO -->
+    <v-container class="d-flex justify-center px-2" style="max-width: 1440px;">
       <div class="form-wrapper w-100">
         <v-row dense>
-          <v-col cols="12" md="6">
+          <v-col cols="12" sm="6">
             <v-select
               label="Producto"
               :items="productos"
@@ -18,7 +18,7 @@
             />
           </v-col>
 
-          <v-col cols="12" md="6">
+          <v-col cols="12" sm="6">
             <v-select
               label="Unidad de medida"
               :items="unidades"
@@ -32,7 +32,7 @@
             />
           </v-col>
 
-          <v-col cols="12" md="6">
+          <v-col cols="12" sm="6">
             <v-text-field
               label="Cantidad"
               v-model.number="form.cantidad"
@@ -44,7 +44,7 @@
             />
           </v-col>
 
-          <v-col cols="12" md="6">
+          <v-col cols="12" sm="6">
             <v-textarea
               label="Observación"
               v-model="form.observacion"
@@ -59,7 +59,7 @@
           </v-col>
         </v-row>
 
-        <div class="d-flex justify-center ga-2 mt-4 mb-6">
+        <div class="d-flex justify-center ga-2 mt-4 mb-6 flex-wrap">
           <v-btn color="primary" :loading="loading" @click="handleGuardar">
             {{ mode === 'create' ? 'Guardar' : 'Actualizar' }}
           </v-btn>
@@ -68,40 +68,71 @@
       </div>
     </v-container>
 
-    <v-container class="mx-auto" style="max-width: 1440px;">
-      <v-text-field
-        v-model="productoSearch"
-        placeholder="Buscar por nombre del producto..."
-        density="comfortable"
-        variant="outlined"
-        hide-details
-        class="mb-4"
-        style="max-width: 500px;"
-      />
+    <!-- TARJETAS EN V-CARD PARA MOVIL / TABLA PARA DESKTOP -->
+    <v-container class="mx-auto px-2" style="max-width: 1440px;">
+      <v-card elevation="4" rounded="xl" class="pa-4">
+        <v-text-field
+          v-model="productoSearch"
+          placeholder="Buscar por nombre del producto..."
+          density="comfortable"
+          variant="outlined"
+          hide-details
+          class="mb-4"
+          style="max-width: 100%; max-width: 500px;"
+        />
 
-      <v-data-table-server
-        v-model:items-per-page="itemsPerPage"
-        :headers="headers"
-        :items="serverItems"
-        :items-length="totalItems"
-        :loading="loading"
-        :search="search"
-        item-value="id"
-        @update:options="loadItems"
-      >
-        <template v-slot:item.createdAt="{ item }">
-          {{ formatDate(item.createdAt) }}
-        </template>
+        <!-- TABLA DESKTOP -->
+        <div class="d-none d-md-block">
+          <div class="table-wrapper">
+            <v-data-table-server
+              v-model:items-per-page="itemsPerPage"
+              :headers="headers"
+              :items="serverItems"
+              :items-length="totalItems"
+              :loading="loading"
+              :search="search"
+              item-value="id"
+              @update:options="loadItems"
+              class="min-width-table"
+            >
+              <template v-slot:item.createdAt="{ item }">
+                {{ formatDate(item.createdAt) }}
+              </template>
 
-        <template v-slot:item.acciones="{ item }">
-          <div class="d-flex ga-1">
-            <EditButtonComponent :item="item" @edit="editItem" />
-            <DeleteButtonComponent :item="item" resource="recepcion" @confirm-delete="deleteItem" />
+              <template v-slot:item.acciones="{ item }">
+                <div class="d-flex ga-1 flex-wrap">
+                  <EditButtonComponent :item="item" @edit="editItem" />
+                  <DeleteButtonComponent :item="item" resource="recepcion" @confirm-delete="deleteItem" />
+                </div>
+              </template>
+            </v-data-table-server>
           </div>
-        </template>
-      </v-data-table-server>
+        </div>
+
+        <!-- CARDS MOVIL -->
+        <div class="d-md-none">
+          <v-row>
+            <v-col cols="12" v-for="item in serverItems" :key="item.id">
+              <v-card class="mb-3" elevation="2">
+                <v-card-text>
+                  <div><strong>Producto:</strong> {{ item.producto?.nombre }}</div>
+                  <div><strong>Unidad:</strong> {{ item.unidadMedida?.nombre }}</div>
+                  <div><strong>Cantidad:</strong> {{ item.cantidad }}</div>
+                  <div><strong>Observación:</strong> {{ item.observacion }}</div>
+                  <div><strong>Fecha:</strong> {{ formatDate(item.createdAt) }}</div>
+                </v-card-text>
+                <v-card-actions>
+                  <EditButtonComponent :item="item" @edit="editItem" />
+                  <DeleteButtonComponent :item="item" resource="recepcion" @confirm-delete="deleteItem" />
+                </v-card-actions>
+              </v-card>
+            </v-col>
+          </v-row>
+        </div>
+      </v-card>
     </v-container>
 
+    <!-- CONFIRMACION Y SNACKBAR -->
     <ConfirmDialog
       v-model="confirmDialog"
       :title="mode === 'create' ? 'Confirmar creación' : 'Confirmar actualización'"
