@@ -10,6 +10,8 @@ import ProviderView from '@/views/ProviderView.vue';
 import HistoryInventoryView from '@/views/HistoryInventoryView.vue';
 import ReceptionView from '@/views/ReceptionView.vue';
 import entradaSalidaProductosView from '@/views/imagenGramera.vue';
+import { useLayout } from 'vuetify';
+import WireframeLayout from '@/layouts/WireframeLayout.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -76,7 +78,7 @@ const router = createRouter({
       name: 'zona-pesaje',
       component: entradaSalidaProductosView,
       meta: { layout: 'WireframeLayout' }
-    }
+    },
   ]
 });
 
