@@ -1,0 +1,214 @@
+[1mdiff --git a/src/assets/fuego.jpeg b/src/assets/fuego.jpeg[m
+[1mdeleted file mode 100644[m
+[1mindex 4425951..0000000[m
+Binary files a/src/assets/fuego.jpeg and /dev/null differ
+[1mdiff --git a/src/components/HeaderComponent.vue b/src/components/HeaderComponent.vue[m
+[1mindex a54c38d..563eed4 100644[m
+[1m--- a/src/components/HeaderComponent.vue[m
+[1m+++ b/src/components/HeaderComponent.vue[m
+[36m@@ -1,6 +1,6 @@[m
+ <template>[m
+   <div class="logo-wrapper">[m
+[31m-    <img alt="fuego" class="logo" src="@/assets/fuego.jpeg" />[m
+[32m+[m[32m    <img alt="fuego" class="logo" src="@/assets/morichal.jpg" />[m
+   </div>[m
+ </template>[m
+ [m
+[36m@@ -14,8 +14,8 @@[m
+ }[m
+ [m
+ .logo {[m
+[31m-  width: 250px;[m
+[31m-  height: auto;[m
+[32m+[m[32m  width: 420px;[m
+[32m+[m[32m  height:350px;[m
+   object-fit: contain;[m
+ }[m
+ </style>[m
+[1mdiff --git a/src/components/HeaderWireframeComponent.vue b/src/components/HeaderWireframeComponent.vue[m
+[1mindex fd0cb23..bf34f06 100644[m
+[1m--- a/src/components/HeaderWireframeComponent.vue[m
+[1m+++ b/src/components/HeaderWireframeComponent.vue[m
+[36m@@ -2,15 +2,23 @@[m
+   <v-app-bar[m
+     app[m
+     flat[m
+[31m-    color="deep-purple"[m
+[32m+[m[32m    color="#2e2e2e"[m
+     density="default"[m
+[31m-  >  <!-- el density da el tamaño de header (prominent > default> comfortable > compact)-->[m
+[31m-[m
+[32m+[m[32m  >[m
+[32m+[m[32m    <!-- Botón hamburguesa solo en pantallas pequeñas -->[m
+[32m+[m[32m    <v-app-bar-nav-icon[m
+[32m+[m[32m      class="d-md-none"[m
+[32m+[m[32m      @click="$emit('toggle-drawer')"[m
+[32m+[m[32m    />[m
+[32m+[m
+[32m+[m[32m    <!-- Logo -->[m
+     <LogoComponent class="logo mr-4" />[m
+ [m
+[31m-    <TopFooterComponent class="d-none d-md-flex" />[m
+[32m+[m[32m    <!-- Footer del header (oculto en pantallas pequeñas) -->[m
+[32m+[m[32m   <TopFooterComponent class="d-flex" />[m
+ [m
+[31m-    <div class="d-flex align-center gap-4">[m
+[32m+[m[32m    <!-- Botón cerrar sesión -->[m
+[32m+[m[32m    <div class="d-flex align-center gap-4 ml-auto">[m
+       <v-btn class="logout-button" color="error" @click="logout" size="small" variant="flat">[m
+         Cerrar sesión[m
+       </v-btn>[m
+[36m@@ -19,12 +27,14 @@[m
+ </template>[m
+ [m
+ <script setup lang="ts">[m
+[31m-import { authSetStore } from '@/stores/AuthStore';[m
+[32m+[m[32mimport { authSetStore } from '@/stores/AuthStore'[m
+ import { useRouter } from 'vue-router'[m
+ import LogoComponent from '@/components/LogoComponent.vue'[m
+ import TopFooterComponent from '@/components/TopFooterComponent.vue'[m
+ [m
+[31m-const authStore = authSetStore();[m
+[32m+[m[32mconst emit = defineEmits(['toggle-drawer'])[m
+[32m+[m
+[32m+[m[32mconst authStore = authSetStore()[m
+ const router = useRouter()[m
+ [m
+ const logout = () => {[m
+[36m@@ -34,13 +44,16 @@[m [mconst logout = () => {[m
+ </script>[m
+ [m
+ <style scoped>[m
+[31m-  .logo {[m
+[31m-    height: 3.1rem;[m
+[31m-    width: auto;[m
+[31m-    margin-left: 1rem;[m
+[31m-  }[m
+[31m-[m
+[31m-  .logout-button {[m
+[31m-    margin-right: 1rem;[m
+[31m-  }[m
+[32m+[m[32m.logo {[m
+[32m+[m[32m  height: 5.0rem;[m
+[32m+[m[32m  width: 5.0rem;[m
+[32m+[m[32m  margin-left: 1rem;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.logout-button {[m
+[32m+[m[32m  margin-right: 1rem;[m
+[32m+[m[32m  width: 100px;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m
+ </style>[m
+[1mdiff --git a/src/components/LogoComponent.vue b/src/components/LogoComponent.vue[m
+[1mindex bdcb8a1..7040be8 100644[m
+[1m--- a/src/components/LogoComponent.vue[m
+[1m+++ b/src/components/LogoComponent.vue[m
+[36m@@ -1,11 +1,11 @@[m
+ <template>[m
+[31m-  <img src="@/assets/fuego.jpeg" alt="Fuego logo" class="logo">[m
+[32m+[m[32m  <img src="@/assets/morichal.jpg" alt="Fuego logo" class="logo">[m
+ </template>[m
+ [m
+ <style scoped>[m
+   .logo {[m
+     width: 350px;[m
+[31m-    height: 150px;[m
+[32m+[m[32m    height: 300px;[m
+     display: flex;[m
+     place-items: center;[m
+   }[m
+[1mdiff --git a/src/components/SidebarWireframeComponent.vue b/src/components/SidebarWireframeComponent.vue[m
+[1mindex 9625030..6c665e0 100644[m
+[1m--- a/src/components/SidebarWireframeComponent.vue[m
+[1m+++ b/src/components/SidebarWireframeComponent.vue[m
+[36m@@ -1,5 +1,14 @@[m
+ <template>[m
+[31m-  <v-navigation-drawer expand-on-hover rail app color="deep-purple">[m
+[32m+[m[32m  <v-navigation-drawer[m
+[32m+[m[32m    v-model="internalDrawer"[m
+[32m+[m[32m    :permanent="isDesktop"[m
+[32m+[m[32m    :temporary="!isDesktop"[m
+[32m+[m[32m    expand-on-hover[m
+[32m+[m[32m    rail[m
+[32m+[m[32m    app[m
+[32m+[m[32m    color="#2e2e2e"[m
+[32m+[m[32m  >[m
+[32m+[m[32m    <!-- Datos del usuario -->[m
+     <v-list>[m
+       <v-list-item[m
+         :prepend-avatar="userData?.avatar"[m
+[36m@@ -8,9 +17,12 @@[m
+       />[m
+     </v-list>[m
+ [m
+[31m-    <!-- Menú lateral -->[m
+[32m+[m[32m    <!-- Enlace al perfil -->[m
+     <v-list-item prepend-icon="mdi-account-circle" title="Perfil" to="/perfil" link />[m
+[31m-    <v-divider />[m
+[32m+[m
+[32m+[m[32m    <v-divider class="my-2" />[m
+[32m+[m
+[32m+[m[32m    <!-- Menú principal -->[m
+     <v-list density="compact" nav>[m
+       <v-list-item prepend-icon="mdi-home" title="Dashboard" to="/dashboard" link />[m
+       <v-list-item prepend-icon="mdi-clipboard-list" title="Inventario" to="/inventario" link />[m
+[36m@@ -18,13 +30,40 @@[m
+       <v-list-item prepend-icon="mdi-view-list" title="Historial" to="/historial-inventario" link />[m
+       <v-list-item prepend-icon="mdi-truck" title="Recepción" to="/recepcion" link />[m
+       <v-list-item prepend-icon="mdi-account-group" title="Proveedores" to="/proveedores" link />[m
+[31m-      <v-list-item prepend-icon="mdi-box" title="zona-pesaje" to="/zona-pesaje" link />[m
+[32m+[m[32m      <v-list-item prepend-icon="mdi-scale-balance" title="Zona Pesaje" to="/zona-pesaje" link />[m
+     </v-list>[m
+   </v-navigation-drawer>[m
+ </template>[m
+ [m
+ <script setup lang="ts">[m
+[31m-import { inject } from 'vue'[m
+[32m+[m[32mimport { inject, ref, watch, onMounted, onBeforeUnmount } from 'vue'[m
+[32m+[m
+[32m+[m[32m// Props: recibe control desde el layout[m
+[32m+[m[32mconst props = defineProps<{ drawer: boolean }>()[m
+[32m+[m[32mconst internalDrawer = ref(props.drawer)[m
+[32m+[m[32mwatch(() => props.drawer, (val) => (internalDrawer.value = val))[m
+ [m
+[32m+[m[32m// Determinar si es pantalla de escritorio[m
+[32m+[m[32mconst isDesktop = ref(window.innerWidth >= 1280)[m
+[32m+[m[32mconst handleResize = () => {[m
+[32m+[m[32m  isDesktop.value = window.innerWidth >= 1280[m
+[32m+[m[32m  if (!isDesktop.value) internalDrawer.value = false[m
+[32m+[m[32m  else internalDrawer.value = true[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32monMounted(() => {[m
+[32m+[m[32m  window.addEventListener('resize', handleResize)[m
+[32m+[m[32m})[m
+[32m+[m[32monBeforeUnmount(() => {[m
+[32m+[m[32m  window.removeEventListener('resize', handleResize)[m
+[32m+[m[32m})[m
+[32m+[m
+[32m+[m[32m// Usuario desde provide[m
+ const userData = inject('userData')[m
+ </script>[m
+[32m+[m
+[32m+[m[32m<style scoped>[m
+[32m+[m[32m.v-navigation-drawer {[m
+[32m+[m[32m  border-right: 1px solid #eee;[m
+[32m+[m[32m}[m
+[32m+[m[32m</style>[m
+[1mdiff --git a/src/components/TopFooterComponent.vue b/src/components/TopFooterComponent.vue[m
+[1mindex aba4cd6..a10cbc6 100644[m
+[1m--- a/src/components/TopFooterComponent.vue[m
+[1m+++ b/src/components/TopFooterComponent.vue[m
+[36m@@ -4,7 +4,7 @@[m [mimport { computed } from 'vue'[m
+ [m
+ const route = useRoute()[m
+ [m
+[31m-const viewName = computed( () => route.name?.toString() || 'Vista')[m
+[32m+[m[32mconst viewName = computed(() => route.name?.toString() || 'Vista')[m
+ </script>[m
+ [m
+ <template>[m
+[36m@@ -18,17 +18,40 @@[m [mconst viewName = computed( () => route.name?.toString() || 'Vista')[m
+ <style scope
