@@ -1,6 +1,7 @@
 <template>
   <div class="pa-4">
-    <v-container class="d-flex justify-center" style="max-width: 1440px;">
+    <!-- FORMULARIO RESPONSIVO -->
+    <v-container class="d-flex justify-center px-2" style="max-width: 1440px;">
       <div class="form-wrapper w-100" style="max-width: 960px;">
         <v-row dense>
           <v-col cols="12" md="6">
@@ -23,7 +24,7 @@
               class="w-100"
             />
           </v-col>
-          <v-col cols="12" md="12">
+          <v-col cols="12">
             <v-text-field
               label="Correo electrónico"
               v-model="form.correo"
@@ -33,7 +34,7 @@
               class="w-100"
             />
           </v-col>
-          <v-col cols="12" md="12">
+          <v-col cols="12">
             <v-textarea
               label="Dirección"
               v-model="form.direccion"
@@ -46,11 +47,11 @@
           </v-col>
         </v-row>
 
-        <div class="d-flex justify-center ga-2 mt-4 mb-6">
+        <div class="d-flex justify-center ga-2 mt-4 mb-6 flex-wrap">
           <v-btn color="primary" @click="validarFormulario" :loading="loading">
             {{ mode === 'create' ? 'Guardar' : 'Actualizar' }}
           </v-btn>
-          <v-btn @click="resetForm" class="ml-3">Cancelar</v-btn>
+          <v-btn color="error" @click="resetForm" class="ml-3">Cancelar</v-btn>
         </div>
 
         <ConfirmDialog
@@ -65,7 +66,8 @@
       </div>
     </v-container>
 
-    <v-container class="mx-auto" style="max-width: 1440px;">
+    <!-- TABLA EN CARD RESPONSIVA -->
+    <v-container class="mx-auto px-2" style="max-width: 1440px;">
       <v-text-field
         v-model="name"
         label="Buscar por nombre"
@@ -77,26 +79,48 @@
         style="max-width: 500px;"
       />
 
-      <v-data-table-server
-        v-model:items-per-page="itemsPerPage"
-        :headers="headers"
-        :items="serverItems"
-        :items-length="totalItems"
-        :loading="loading"
-        :search="search"
-        item-value="id"
-        class="elevation-1"
-        @update:options="loadItems"
-      >
-        <template v-slot:item.acciones="{ item }">
-          <div class="d-flex ga-1">
+      <!-- Versión de tabla para pantallas grandes -->
+      <div class="d-none d-md-block">
+        <v-data-table-server
+          v-model:items-per-page="itemsPerPage"
+          :headers="headers"
+          :items="serverItems"
+          :items-length="totalItems"
+          :loading="loading"
+          :search="search"
+          item-value="id"
+          class="elevation-1"
+          @update:options="loadItems"
+        >
+          <template v-slot:item.acciones="{ item }">
+            <div class="d-flex ga-1">
+              <EditButtonComponent :item="item" @edit="editItem" />
+              <DeleteButtonComponent :item="item" resource="proveedor" @confirm-delete="deleteItem" />
+            </div>
+          </template>
+        </v-data-table-server>
+      </div>
+
+      <!-- Versión de tarjetas para pantallas pequeñas -->
+      <div class="d-md-none d-flex flex-column ga-3">
+        <v-card
+          v-for="item in serverItems"
+          :key="item.id"
+          class="pa-4"
+          elevation="2"
+          rounded="xl"
+        >
+          <div><strong>Nombre:</strong> {{ item.nombre }}</div>
+          <div><strong>Teléfono:</strong> {{ item.telefono }}</div>
+          <div><strong>Correo:</strong> {{ item.correo }}</div>
+          <div><strong>Dirección:</strong> {{ item.direccion }}</div>
+          <div class="d-flex mt-2 ga-1">
             <EditButtonComponent :item="item" @edit="editItem" />
             <DeleteButtonComponent :item="item" resource="proveedor" @confirm-delete="deleteItem" />
           </div>
-        </template>
-      </v-data-table-server>
+        </v-card>
+      </div>
     </v-container>
-
 
     <v-snackbar v-model="snackbar.show" :timeout="3000" :color="snackbar.color" top right>
       {{ snackbar.message }}
@@ -106,6 +130,7 @@
     </v-snackbar>
   </div>
 </template>
+
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'

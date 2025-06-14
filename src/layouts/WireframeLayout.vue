@@ -1,28 +1,34 @@
 <template>
   <v-app>
-    <HeaderWireframeComponent />
-    <SidebarWireframeComponent />
+    <!-- Header con botón para abrir/cerrar el sidebar -->
+    <HeaderWireframeComponent @toggle-drawer="drawer = !drawer" />
 
-      <!-- Contenido principal -->
-      <v-main>
-          <router-view />
-      </v-main>
+    <!-- Sidebar controlado por la variable 'drawer' -->
+    <SidebarWireframeComponent :drawer="drawer" />
 
+    <!-- Contenido principal -->
+    <v-main>
+      <router-view />
+    </v-main>
   </v-app>
 </template>
 
 <script setup lang="ts">
-import SidebarWireframeComponent from '@/components/SidebarWireframeComponent.vue';
-import HeaderWireframeComponent from '@/components/HeaderWireframeComponent.vue';
+import SidebarWireframeComponent from '@/components/SidebarWireframeComponent.vue'
+import HeaderWireframeComponent from '@/components/HeaderWireframeComponent.vue'
 import { provide, ref, onMounted } from 'vue'
 
+// Estado del menú lateral (drawer)
+const drawer = ref(window.innerWidth >= 1280) // true si pantalla grande
+
+// Datos del usuario
 const userData = ref({
   nombre: '',
   email: '',
   avatar: 'https://i.pravatar.cc/100?img=3',
 })
 
-// Cargar desde localStorage o store
+// Cargar desde localStorage
 onMounted(() => {
   const localUser = localStorage.getItem('user')
   if (localUser) {
@@ -35,5 +41,6 @@ onMounted(() => {
   }
 })
 
+// Proveer datos del usuario para uso global (inject)
 provide('userData', userData)
 </script>
