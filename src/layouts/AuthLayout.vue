@@ -21,23 +21,35 @@ import FooterComponent from '@/components/FooterComponent.vue'
 <style scoped>
 .auth-layout {
   display: flex;
-  align-items: center; /* ✅ centra verticalmente logo y formulario */
+  flex-direction: row;
   justify-content: center;
-  gap:140px;
-  min-height: 80vh;
+  align-items: center;
   padding: 40px;
+  gap: 80px;
+  flex-wrap: wrap;
+  margin-bottom: 100px; /* para que no lo tape el footer fijo */
 }
 
-/* Logo no se estira ni empuja */
 .logo-container {
   flex-shrink: 0;
   display: flex;
-  align-items: center;
   justify-content: center;
 }
 
-/* Formulario con ancho fijo */
 .form-container {
-  width:500px;
+  width: 100%;
+  max-width: 420px;
+}
+
+@media (max-width: 600px) {
+  .auth-layout {
+    flex-direction: column;
+    padding: 24px 16px;
+    gap: 32px;
+  }
+
+  .form-container {
+    max-width: 100%;
+  }
 }
 </style>
