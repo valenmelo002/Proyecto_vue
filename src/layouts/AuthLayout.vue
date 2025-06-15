@@ -1,40 +1,55 @@
+<template>
+  <div class="auth-layout">
+    <div class="logo-container">
+      <HeaderComponent />
+    </div>
+
+    <div class="form-container">
+      <RouterView />
+    </div>
+  </div>
+
+  <FooterComponent />
+</template>
+
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import FooterComponent from '@/components/FooterComponent.vue'
 </script>
 
-<template>
-  <HeaderComponent />
-  <RouterView />
-  <FooterComponent />
-</template>
-
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+.auth-layout {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: center;
   align-items: center;
+  padding: 40px;
+  gap: 80px;
+  flex-wrap: wrap;
+  margin-bottom: 100px; /* para que no lo tape el footer fijo */
 }
 
-nav {
+.logo-container {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.form-container {
   width: 100%;
-  font-size: 14px;
-  text-align: center;
-  margin-top: 2rem;
+  max-width: 420px;
 }
 
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  text-decoration: none;
-  color: #333;
-  font-weight: bold;
-}
+@media (max-width: 600px) {
+  .auth-layout {
+    flex-direction: column;
+    padding: 24px 16px;
+    gap: 32px;
+  }
 
-nav a:hover {
-  color: #42b983;
+  .form-container {
+    max-width: 100%;
+  }
 }
 </style>

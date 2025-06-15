@@ -29,7 +29,7 @@
           <v-col cols="4">
             <v-text-field label="Teléfono" v-model="form.numero_telefono" :rules="[rules.required, rules.minNumberTelefono, rules.maxNumberTelefono]" />
           </v-col>
-          <v-col cols="4">
+          <v-col cols="4" v-if="mode === 'create'">
             <v-text-field label="Contraseña" v-model="form.password" type="password" :rules="[rules.required, rules.password]" />
           </v-col>
           <v-col cols="4">
@@ -38,7 +38,7 @@
               :items="roles"
               item-value="id"
               item-title="nombre"
-              v-model="form.rol_id"
+              v-model="form.role_id"
               variant="outlined"
               :rules="[rules.selectRole]"
             />
@@ -60,7 +60,6 @@
       </v-form>
     </div>
 
-    <!-- Tabla -->
     <v-data-table-server
       class="mt-8"
       v-model:items-per-page="itemsPerPage"
@@ -91,7 +90,6 @@ import ConfirmDialog from '@/components/ModalComponent.vue'
 import EditButtonComponent from '@/components/button/EditComponent.vue'
 import DeleteButtonComponent from '@/components/button/DeleteComponent.vue'
 
-// Tabla
 const headers = ref([
   { title: 'ID', key: 'id' },
   { title: 'Nombre', key: 'nombre' },
@@ -105,11 +103,7 @@ const itemsPerPage = ref(5)
 const serverItems = ref([])
 const totalItems = ref(0)
 const search = ref('')
-const currentOptions = ref({
-  page: 1,
-  itemsPerPage: 5,
-  sortBy: [],
-})
+const currentOptions = ref({ page: 1, itemsPerPage: 5, sortBy: [] })
 const loading = ref(false)
 const formRef = ref()
 
@@ -138,7 +132,7 @@ const form = ref({
   correo: '',
   password: '',
   numero_telefono: '',
-  rol_id: null,
+  role_id: null,
 })
 
 const roles = ref([])
@@ -159,7 +153,7 @@ function resetForm() {
     correo: '',
     password: '',
     numero_telefono: '',
-    rol_id: null,
+    role_id: null,
   }
   mode.value = 'create'
 }
@@ -174,24 +168,10 @@ async function submit() {
   confirmDialog.value = false
   loading.value = true
   try {
-    const payload = {
-      id: form.value.id,
-      nombre: form.value.nombre,
-      apellido: form.value.apellido,
-      tipo_documento_id: form.value.tipo_documento_id,
-      numero_documento: form.value.numero_documento,
-      correo: form.value.correo,
-      password: form.value.password,
-      numero_telefono: form.value.numero_telefono,
-      role_id: form.value.rol_id, // Mapeo correcto
-    }
-
-    if (mode.value === 'create') {
-      await UserService.create(payload)
-    } else {
-      await UserService.update(form.value.id!, payload)
-    }
-
+    const payload: any = { ...form.value }
+    if (mode.value === 'update') delete payload.password
+    if (mode.value === 'create') await UserService.create(payload)
+    else await UserService.update(form.value.id!, payload)
     resetForm()
     loadItems(currentOptions.value)
   } catch (e) {
@@ -200,7 +180,6 @@ async function submit() {
     loading.value = false
   }
 }
-
 
 function editItem(item: any) {
   form.value = {
@@ -211,7 +190,7 @@ function editItem(item: any) {
     numero_documento: item.numero_documento ?? '',
     correo: item.correo ?? '',
     numero_telefono: item.numero_telefono ?? '',
-    rol_id: item.rol?.id ?? null,
+    role_id: item.rol?.id ?? null,
     password: '',
   }
   mode.value = 'update'
@@ -235,7 +214,6 @@ async function loadItems(options: any) {
       page: options.page,
       limit: options.itemsPerPage,
     })
-
     serverItems.value = data.map((item: any) => ({
       id: item.id,
       nombre: item.user?.nombre ?? '',
@@ -246,10 +224,9 @@ async function loadItems(options: any) {
       numero_telefono: item.user?.numero_telefono ?? '',
       rol: {
         id: item.roles?.id ?? null,
-        nombre: item.roles?.nombre ?? ''
-      }
+        nombre: item.roles?.nombre ?? '',
+      },
     }))
-
     totalItems.value = total
   } catch (e) {
     console.error('Error al cargar usuarios:', e)

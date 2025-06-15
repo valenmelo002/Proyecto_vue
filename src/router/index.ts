@@ -10,9 +10,9 @@ import ProviderView from '@/views/ProviderView.vue';
 import HistoryInventoryView from '@/views/HistoryInventoryView.vue';
 import ReceptionView from '@/views/ReceptionView.vue';
 import entradaSalidaProductosView from '@/views/imagenGramera.vue';
-import { useLayout } from 'vuetify';
+import PerfilView from '@/views/PerfilView.vue';
+import UsersView from '@/views/UsersView.vue';
 import WireframeLayout from '@/layouts/WireframeLayout.vue';
-import UsersView from '@/views/UsersView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +38,12 @@ const router = createRouter({
       name: 'restore',
       component: RestoreView,
       meta: { layout: 'AuthLayout' }
+    },
+    {
+      path: '/perfil',
+      name: 'perfil',
+      component: PerfilView,
+      meta: { layout: 'WireframeLayout' }
     },
     {
       path: '/dashboard',
@@ -75,7 +81,7 @@ const router = createRouter({
       component: ProviderView,
       meta: { layout: 'WireframeLayout' }
     },
-      {
+    {
       path: '/zona-pesaje',
       name: 'zona-pesaje',
       component: entradaSalidaProductosView,
