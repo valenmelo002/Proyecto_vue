@@ -29,20 +29,26 @@ export default class UserService {
     return await response.json()
   }
 
-  static async create(data: any) {
-    const token = localStorage.getItem('token')
-    const response = await fetch(URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    })
+ static async create(data: any) {
+  const token = localStorage.getItem('token')
+  const response = await fetch(URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  })
 
-    if (!response.ok) throw new Error('Error al crear el usuario')
-    return await response.json()
+  const json = await response.json()
+
+  if (!response.ok) {
+    console.error('❌ Error del backend:', json) // <--- Esto nos mostrará el detalle
+    throw new Error('Error al crear el usuario')
   }
+
+  return json
+}
 
   static async update(id: number, data: any) {
     const token = localStorage.getItem('token')
@@ -68,7 +74,10 @@ export default class UserService {
       },
     })
 
-    if (!response.ok) throw new Error('Error al eliminar el usuario')
-    return true
+    if (!response.ok) {
+      const error = await response.json()
+      console.error('❌ Error del backend al eliminar:', error)
+      throw new Error('Error al eliminar el usuario')
+    }
   }
 }

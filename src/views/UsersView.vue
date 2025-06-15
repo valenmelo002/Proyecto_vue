@@ -1,5 +1,5 @@
 <template>
-  <div class="pa-4">
+  <v-container class="pa-4" style="max-width: 1400px;" fluid>
     <div class="mb-6">
       <v-form ref="formRef">
         <v-row dense>
@@ -44,11 +44,11 @@
             />
           </v-col>
         </v-row>
-        <div>
-        <v-btn color="primary" @click="checkFormBeforeConfirm" :loading="loading" class="mr-2">
-          {{ mode === 'create' ? 'Guardar' : 'Actualizar' }}
-        </v-btn>
-        <v-btn @click="resetForm">Cancelar</v-btn>
+        <div class="mt-4">
+          <v-btn color="primary" @click="checkFormBeforeConfirm" :loading="loading" class="mr-2">
+            {{ mode === 'create' ? 'Guardar' : 'Actualizar' }}
+          </v-btn>
+          <v-btn @click="resetForm">Cancelar</v-btn>
         </div>
         <ConfirmDialog
           v-model="confirmDialog"
@@ -62,6 +62,7 @@
 
     <!-- Tabla -->
     <v-data-table-server
+      class="mt-8"
       v-model:items-per-page="itemsPerPage"
       :headers="headers"
       :items="serverItems"
@@ -78,7 +79,7 @@
         </div>
       </template>
     </v-data-table-server>
-  </div>
+  </v-container>
 </template>
 
 <script setup lang="ts">
@@ -173,11 +174,24 @@ async function submit() {
   confirmDialog.value = false
   loading.value = true
   try {
-    if (mode.value === 'create') {
-      await UserService.create(form.value)
-    } else {
-      await UserService.update(form.value.id!, form.value)
+    const payload = {
+      id: form.value.id,
+      nombre: form.value.nombre,
+      apellido: form.value.apellido,
+      tipo_documento_id: form.value.tipo_documento_id,
+      numero_documento: form.value.numero_documento,
+      correo: form.value.correo,
+      password: form.value.password,
+      numero_telefono: form.value.numero_telefono,
+      role_id: form.value.rol_id, // Mapeo correcto
     }
+
+    if (mode.value === 'create') {
+      await UserService.create(payload)
+    } else {
+      await UserService.update(form.value.id!, payload)
+    }
+
     resetForm()
     loadItems(currentOptions.value)
   } catch (e) {
@@ -186,6 +200,7 @@ async function submit() {
     loading.value = false
   }
 }
+
 
 function editItem(item: any) {
   form.value = {
