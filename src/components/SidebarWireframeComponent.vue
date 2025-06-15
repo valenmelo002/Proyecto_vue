@@ -18,7 +18,13 @@
     </v-list>
 
     <!-- Enlace al perfil -->
-    <v-list-item prepend-icon="mdi-account-circle" title="Perfil" to="/perfil" link @click="closeDrawer" />
+    <v-list-item
+      prepend-icon="mdi-account-circle"
+      title="Perfil"
+      to="/perfil"
+      link
+      @click="closeDrawer"
+    />
 
     <v-divider class="my-2" />
 
@@ -30,7 +36,27 @@
       <v-list-item prepend-icon="mdi-view-list" title="Historial" to="/historial-inventario" link @click="closeDrawer" />
       <v-list-item prepend-icon="mdi-truck" title="Recepción" to="/recepcion" link @click="closeDrawer" />
       <v-list-item prepend-icon="mdi-account-group" title="Proveedores" to="/proveedores" link @click="closeDrawer" />
+      <v-list-item prepend-icon="mdi-phone" title="Contacto" to="/contacto" link @click="closeDrawer" />
       <v-list-item prepend-icon="mdi-scale-balance" title="Zona Pesaje" to="/zona-pesaje" link @click="closeDrawer" />
+
+      <!-- Grupo de configuración -->
+      <v-list-group
+        value="Configuración"
+        prepend-icon="mdi-cog-outline"
+        no-action
+      >
+        <template #activator="{ props }">
+          <v-list-item v-bind="props" title="Configuración" />
+        </template>
+
+        <v-list-item
+          title="Usuarios"
+          to="/setting/user"
+          prepend-icon="mdi-account-cog-outline"
+          link
+          @click="closeDrawer"
+        />
+      </v-list-group>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -77,7 +103,7 @@ const userData = inject('userData')
 /* Ajustar el drawer en pantallas pequeñas */
 @media (max-width: 1280px) {
   .v-navigation-drawer {
-    width: 250px; /* Puedes ajustar el tamaño del drawer en pantallas pequeñas */
+    width: 250px;
   }
 }
 </style>

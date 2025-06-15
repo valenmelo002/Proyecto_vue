@@ -11,6 +11,9 @@ import HistoryInventoryView from '@/views/HistoryInventoryView.vue';
 import ReceptionView from '@/views/ReceptionView.vue';
 import entradaSalidaProductosView from '@/views/imagenGramera.vue';
 import PerfilView from '@/views/PerfilView.vue';
+import UsersView from '@/views/UsersView.vue';
+import WireframeLayout from '@/layouts/WireframeLayout.vue';
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -36,7 +39,7 @@ const router = createRouter({
       component: RestoreView,
       meta: { layout: 'AuthLayout' }
     },
-      {
+    {
       path: '/perfil',
       name: 'perfil',
       component: PerfilView,
@@ -78,12 +81,18 @@ const router = createRouter({
       component: ProviderView,
       meta: { layout: 'WireframeLayout' }
     },
-      {
+    {
       path: '/zona-pesaje',
       name: 'zona-pesaje',
       component: entradaSalidaProductosView,
       meta: { layout: 'WireframeLayout' }
-    }
+    },
+    {
+      path: '/setting/user',
+      name: 'usuarios',
+      component: UsersView,
+      meta: { layout: 'WireframeLayout' }
+    },
   ]
 });
 
