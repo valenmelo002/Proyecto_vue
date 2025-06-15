@@ -12,6 +12,7 @@
         title="Sandra Adams"
       ></v-list-item>
     </v-list>
+
     <v-list-item
       prepend-icon="mdi-account-circle"
       title="Perfil"
@@ -50,7 +51,7 @@
       />
       <v-list-item
         prepend-icon="mdi-truck"
-        title="Recepcion"
+        title="Recepción"
         to="/recepcion"
         link
       />
@@ -66,12 +67,30 @@
         to="/contacto"
         link
       />
-        <v-list-item
+      <v-list-item
         prepend-icon="mdi-box"
-        title="zona-pesaje"
+        title="Zona Pesaje"
         to="/zona-pesaje"
         link
       />
+
+      <!-- NUEVO GRUPO: Configuración -->
+      <v-list-group
+        value="Configuración"
+        prepend-icon="mdi-cog-outline"
+        no-action
+      >
+        <template #activator="{ props }">
+          <v-list-item v-bind="props" title="Configuración" />
+        </template>
+
+        <v-list-item
+          title="Usuarios"
+          to="/setting/user"
+          prepend-icon="mdi-account-cog-outline"
+          link
+        />
+      </v-list-group>
     </v-list>
   </v-navigation-drawer>
 </template>

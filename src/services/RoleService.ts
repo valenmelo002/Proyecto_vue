@@ -1,4 +1,4 @@
-const URL = 'http://localhost:3333/role'
+const URL = 'http://localhost:3333/roles'
 
 export default class RoleService {
   static async getAll() {
@@ -11,6 +11,6 @@ export default class RoleService {
       },
     })
     if (!response.ok) throw new Error('Error al cargar los roles')
-    return await response.json()
+      return await response.json()
   }
 }
