@@ -6,16 +6,28 @@ const authStore = authSetStore()
 const email = ref('')
 const password = ref('')
 
-const handlerLogin = () => {
+const snackbar = ref(false)
+const snackbarText = ref('')
+const snackbarColor = ref('red')
+
+const handlerLogin = async () => {
   if (!email.value || !password.value) {
-    alert('Todos los campos son necesarios.')
+    snackbarText.value = 'Todos los campos son obligatorios.'
+    snackbarColor.value = 'red'
+    snackbar.value = true
     return
   }
 
-  authStore.login({
-    email: email.value,
-    password: password.value,
-  })
+  try {
+    await authStore.login({
+      email: email.value,
+      password: password.value,
+    })
+  } catch (err) {
+    snackbarText.value = 'Credenciales incorrectas.'
+    snackbarColor.value = 'red'
+    snackbar.value = true
+  }
 }
 </script>
 
@@ -53,7 +65,7 @@ const handlerLogin = () => {
       <v-btn
         type="submit"
         block
-        style="background-color: #bb71e8; color: white; font-size: 16px; padding: 14px 0; border-radius: 12px;"
+        style="background-color: #1842ff; color: white; font-size: 16px; padding: 14px 0; border-radius: 12px;"
       >
         Iniciar sesión
       </v-btn>
@@ -64,12 +76,18 @@ const handlerLogin = () => {
             ¿Has olvidado tu contraseña?
           </RouterLink>
         </p>
-        <p>
-          <RouterLink to="/Register" class="text-decoration-underline" style="color: #555">
-            Regístrate ahora
-          </RouterLink>
-        </p>
       </div>
     </v-form>
   </v-card>
+
+  <v-snackbar
+    v-model="snackbar"
+    :color="snackbarColor"
+    location="top center"
+    timeout="3000"
+    multi-line
+    elevation="10"
+  >
+    {{ snackbarText }}
+  </v-snackbar>
 </template>

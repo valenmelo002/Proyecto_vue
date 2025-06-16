@@ -56,7 +56,7 @@ const logout = () => {
 .logout-button {
   margin-right: 1rem;
   width: 120px;
-  font-size: clamp(13px, 1.5vw, 16px);
+  font-size: clamp(13px, 1.5vw, 14.5px);
   font-weight: 600;
 }
 
