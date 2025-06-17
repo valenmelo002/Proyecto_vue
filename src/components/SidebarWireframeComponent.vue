@@ -35,8 +35,6 @@
       <v-list-item prepend-icon="mdi-cube-outline" title="Productos" to="/producto" link />
       <v-list-item prepend-icon="mdi-view-list" title="Historial" to="/historial-inventario" link />
       <v-list-item prepend-icon="mdi-truck" title="Recepción" to="/recepcion" link />
-      <v-list-item prepend-icon="mdi-cash-multiple" title="mesas" to="/mesa" link />
-      <v-list-item prepend-icon="mdi-account-circle" title="Cajero" to="/cajero" link />
       <v-list-item prepend-icon="mdi-account-group" title="Proveedores" to="/proveedores" link />
       <v-list-item prepend-icon="mdi-box" title="zona-pesaje" to="/zona-pesaje" link />
     </v-list>
