@@ -1,7 +1,50 @@
 <template>
-  <div class="pa-4">
-    <!-- TABLA -->
+  <v-container fluid class="pa-4">
+    <!-- FILTRO -->
+    <v-row justify="end" class="mb-4">
+      <v-col cols="12" sm="6" md="4">
+        <v-text-field
+          v-model="name"
+          density="compact"
+          placeholder="Buscar por producto..."
+          prepend-inner-icon="mdi-magnify"
+          hide-details
+          variant="outlined"
+        />
+      </v-col>
+    </v-row>
+
+    <!-- RESPONSIVE -->
+    <div v-if="isMobile">
+      <v-row dense>
+        <v-col
+          v-for="item in serverItems"
+          :key="item.id"
+          cols="12"
+        >
+          <v-card class="pa-3 mb-2" elevation="2">
+            <div><strong>Producto:</strong> {{ item.producto?.nombre ?? 'Sin nombre' }}</div>
+            <div><strong>Movimiento:</strong> {{ item.tipoMovimiento }}</div>
+            <div><strong>Cantidad:</strong> {{ item.cantidad }}</div>
+            <div><strong>Fecha:</strong> {{ formatDate(item.fecha) }}</div>
+            <div><strong>Descripción:</strong> {{ item.descripcion }}</div>
+          </v-card>
+        </v-col>
+      </v-row>
+
+      <!-- PAGINACIÓN MANUAL -->
+      <v-pagination
+        v-model="currentOptions.page"
+        :length="Math.ceil(totalItems / currentOptions.itemsPerPage)"
+        total-visible="5"
+        class="mt-4"
+        @update:modelValue="loadItems(currentOptions)"
+      />
+    </div>
+
+    <!-- TABLA EN iPAD MINI O MÁS GRANDE -->
     <v-data-table-server
+      v-else
       v-model:items-per-page="itemsPerPage"
       :headers="headers"
       :items="serverItems"
@@ -9,35 +52,22 @@
       :loading="loading"
       :search="search"
       item-value="id"
+      class="elevation-1"
       @update:options="loadItems"
     >
-      <template v-slot:item.producto="{ item }: { item: { producto?: { nombre?: string } } }">
+      <template #item.producto="{ item }">
         {{ item.producto?.nombre ?? 'Sin nombre' }}
       </template>
 
-      <template v-slot:item.fecha="{ item }">
-        {{ new Date(item.fecha).toISOString().slice(0, 10) }}
-      </template>
-
-      <template v-slot:tfoot>
-        <tr>
-          <td colspan="6">
-            <v-text-field
-              v-model="name"
-              class="ma-2"
-              density="compact"
-              placeholder="Buscar por producto..."
-              hide-details
-            />
-          </td>
-        </tr>
+      <template #item.fecha="{ item }">
+        {{ formatDate(item.fecha) }}
       </template>
     </v-data-table-server>
-  </div>
+  </v-container>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 import HistorialInventarioService from '@/services/HistorialInventarioService'
 
 // Columnas de la tabla
@@ -62,7 +92,34 @@ const currentOptions = ref({
   sortBy: [],
 })
 
-// Métodos
+// Mobile detection (menor a 768px)
+const isMobile = ref(false)
+
+const checkWidth = () => {
+  isMobile.value = window.innerWidth < 768
+}
+
+onMounted(() => {
+  checkWidth()
+  window.addEventListener('resize', checkWidth)
+  loadItems(currentOptions.value)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkWidth)
+})
+
+// Watch para búsquedas
+watch(name, () => {
+  search.value = Date.now().toString()
+})
+
+// Formato de fecha
+const formatDate = (dateStr: string) => {
+  return new Date(dateStr).toISOString().slice(0, 10)
+}
+
+// Cargar datos desde API
 function loadItems(options: any) {
   currentOptions.value = options
   loading.value = true
@@ -84,12 +141,4 @@ function loadItems(options: any) {
       loading.value = false
     })
 }
-
-watch(name, () => {
-  search.value = Date.now().toString()
-})
-
-onMounted(() => {
-  loadItems(currentOptions.value)
-})
 </script>

@@ -120,7 +120,7 @@ const mesas = ref([
   { id: 5, numero: 5, pedido: '001', demora: '00:00 min', estado: 'Asignada' },
 ])
 
-const categorias = ['Entrada', 'platos a la carta', 'bebidas', 'postres', 'cumpleaños']
+const categorias = ['Entrada', 'platos a la carta', 'bebidas', 'postres']
 
 const platos = ref([
   {

@@ -109,7 +109,7 @@
 <script setup lang="ts">
 import { ref, watch, inject } from 'vue'
 import { authSetStore } from '@/stores/AuthStore'
-import UserService from '@/services/UserService'
+import PasswordService from '@/services/PasswordService'
 
 // Store + contexto global
 const store = authSetStore()
@@ -239,7 +239,7 @@ async function cambiarPassword() {
   }
 
   try {
-    const service = new UserService()
+    const service = new PasswordService()
     await service.cambiarPassword(correo, actual, nueva)
 
     snackbar.value = {

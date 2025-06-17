@@ -11,6 +11,11 @@ import HistoryInventoryView from '@/views/HistoryInventoryView.vue';
 import ReceptionView from '@/views/ReceptionView.vue';
 import entradaSalidaProductosView from '@/views/imagenGramera.vue';
 import PerfilView from '@/views/PerfilView.vue';
+import UsersView from '@/views/UsersView.vue';
+import WireframeLayout from '@/layouts/WireframeLayout.vue';
+import CashierView from '@/views/CashierView.vue';
+import TablesView from '@/views/TablesView.vue';
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -36,7 +41,7 @@ const router = createRouter({
       component: RestoreView,
       meta: { layout: 'AuthLayout' }
     },
-      {
+    {
       path: '/perfil',
       name: 'perfil',
       component: PerfilView,
@@ -73,27 +78,27 @@ const router = createRouter({
       meta: { layout: 'WireframeLayout' }
     },
     {
+      path: '/cajero',
+      name: 'cajero',
+      component: CashierView,
+      meta: { layout: 'WireframeLayout' }
+    },
+    {
+      path: '/mesa',
+      name: 'mesas',
+      component: TablesView,
+      meta: { layout: 'WireframeLayout' }
+    },
+    {
       path: '/proveedores',
       name: 'proveedores',
       component: ProviderView,
       meta: { layout: 'WireframeLayout' }
     },
-      {
+    {
       path: '/zona-pesaje',
       name: 'zona-pesaje',
       component: entradaSalidaProductosView,
-      meta: { layout: 'WireframeLayout' }
-    },
-    {
-      path: '/cajero',
-      name: 'cajero',
-      component: () => import('@/views/CashierView.vue'),
-      meta: { layout: 'WireframeLayout' }
-    },
-    {
-      path: '/Mesas',
-      name: 'mesas',
-      component: () => import('@/views/TablesView.vue'),
       meta: { layout: 'WireframeLayout' }
     }
   ]

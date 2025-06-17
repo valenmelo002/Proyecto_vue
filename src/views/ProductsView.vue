@@ -1,5 +1,6 @@
 <template>
   <div class="pa-4">
+    <!-- FORMULARIO -->
     <v-container class="d-flex justify-center" style="max-width: 1440px;">
       <div class="form-wrapper w-100">
         <v-row dense>
@@ -78,14 +79,10 @@
         </v-row>
 
         <div class="d-flex justify-center ga-2 mt-4 mb-6">
-          <v-btn
-            color="primary"
-            @click="handleClickGuardar"
-            :loading="loading"
-          >
+          <v-btn color="primary" @click="handleClickGuardar" :loading="loading">
             {{ mode === 'create' ? 'Guardar' : 'Actualizar' }}
           </v-btn>
-          <v-btn @click="resetForm" class="ml-2">Cancelar</v-btn>
+          <v-btn color="error" @click="resetForm" class="ml-2">Cancelar</v-btn>
         </div>
 
         <ConfirmDialog
@@ -100,6 +97,7 @@
       </div>
     </v-container>
 
+    <!-- BUSCADOR -->
     <v-container class="mx-auto" style="max-width: 1440px;">
       <v-text-field
         v-model="name"
@@ -108,10 +106,13 @@
         density="comfortable"
         variant="outlined"
         hide-details
-        class="mb-4"
+        class="mb-4 mx-auto"
         style="max-width: 500px;"
       />
+    </v-container>
 
+    <!-- TABLA -->
+    <v-container class="table-view px-2" style="max-width: 1440px;">
       <v-data-table-server
         v-model:items-per-page="itemsPerPage"
         :headers="headers"
@@ -134,6 +135,32 @@
           </div>
         </template>
       </v-data-table-server>
+    </v-container>
+
+    <!-- TARJETAS -->
+    <v-container class="cards-view px-2">
+      <v-row dense>
+        <v-col cols="12" v-for="item in serverItems" :key="item.id">
+          <v-card class="mb-2">
+            <v-card-title class="text-h6">{{ item.nombre }}</v-card-title>
+            <v-card-subtitle class="text-caption">{{ item.descripcion }}</v-card-subtitle>
+            <v-card-text>
+              <div><strong>Precio:</strong> ${{ item.precio }}</div>
+              <div><strong>Categoría:</strong> {{ item.categoria?.nombre }}</div>
+              <div><strong>Unidad:</strong> {{ item.unidadMedida?.nombre }}</div>
+              <div><strong>Disponible:</strong> {{ item.disponible ? 'Sí' : 'No' }}</div>
+            </v-card-text>
+            <v-card-actions>
+              <EditButtonComponent :item="item" @edit="editItem" />
+              <DeleteButtonComponent
+                :item="item"
+                resource="producto"
+                @confirm-delete="deleteItem"
+              />
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
     </v-container>
 
     <!-- SNACKBAR -->
@@ -168,16 +195,10 @@ const totalItems = ref(0)
 const loading = ref(false)
 const name = ref('')
 const search = ref('')
-const currentOptions = ref({
-  page: 1,
-  itemsPerPage: 5,
-  sortBy: [],
-})
-
+const currentOptions = ref({ page: 1, itemsPerPage: 5, sortBy: [] })
 const snackbar = ref(false)
 const snackbarMessage = ref('')
 const snackbarColor = ref('success')
-
 const mode = ref<'create' | 'update'>('create')
 const form = ref({
   id: null,
@@ -186,10 +207,9 @@ const form = ref({
   precio: '',
   categoria_id: null,
   unidad_medida_id: null,
-  disponible: true,
+  disponible: true
 })
 const confirmDialog = ref(false)
-
 const categorias = ref([])
 const unidades = ref([])
 
@@ -210,25 +230,18 @@ function resetForm() {
     precio: '',
     categoria_id: null,
     unidad_medida_id: null,
-    disponible: true,
+    disponible: true
   }
   mode.value = 'create'
 }
 
 function handleClickGuardar() {
-  if (
-    !form.value.nombre ||
-    !form.value.descripcion ||
-    !form.value.precio ||
-    !form.value.categoria_id ||
-    !form.value.unidad_medida_id
-  ) {
+  if (!form.value.nombre || !form.value.descripcion || !form.value.precio || !form.value.categoria_id || !form.value.unidad_medida_id) {
     snackbarMessage.value = 'Por favor completa todos los campos obligatorios.'
     snackbarColor.value = 'error'
     snackbar.value = true
     return
   }
-
   confirmDialog.value = true
 }
 
@@ -242,9 +255,8 @@ async function submit() {
       precio: form.value.precio,
       categoria_id: form.value.categoria_id,
       unidad_medida_id: form.value.unidad_medida_id,
-      disponible: form.value.disponible,
+      disponible: form.value.disponible
     }
-
     if (mode.value === 'create') {
       await ProductoService.create(data)
       snackbarMessage.value = 'Producto creado con éxito.'
@@ -252,10 +264,8 @@ async function submit() {
       await ProductoService.update(form.value.id!, data)
       snackbarMessage.value = 'Producto actualizado con éxito.'
     }
-
     snackbarColor.value = 'success'
     snackbar.value = true
-
     resetForm()
     loadItems(currentOptions.value)
   } catch (e) {
@@ -276,7 +286,7 @@ function editItem(item: any) {
     precio: item.precio,
     categoria_id: item.categoria?.id ?? null,
     unidad_medida_id: item.unidadMedida?.id ?? null,
-    disponible: item.disponible,
+    disponible: item.disponible
   }
   mode.value = 'update'
   window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -300,12 +310,11 @@ async function deleteItem(item: { id: number }) {
 function loadItems(options: any) {
   currentOptions.value = options
   loading.value = true
-
   ProductoService.getPaginated({
     page: options.page,
     itemsPerPage: options.itemsPerPage,
     sortBy: options.sortBy,
-    search: { name: name.value },
+    search: { name: name.value }
   })
     .then(({ items, total }) => {
       serverItems.value = items
@@ -322,7 +331,6 @@ function loadItems(options: any) {
 watch(name, () => {
   search.value = Date.now().toString()
 })
-
 onMounted(() => {
   loadItems(currentOptions.value)
   loadSelects()
@@ -330,12 +338,20 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.form-wrapper > .v-row > .v-col {
-  max-width: 300px;
-  margin: 0 auto;
+.table-view {
+  display: none;
 }
 
-.form-wrapper .w-100 {
-  max-width: 100%;
+.cards-view {
+  display: block;
+}
+
+@media (min-width: 812px) {
+  .table-view {
+    display: block !important;
+  }
+  .cards-view {
+    display: none !important;
+  }
 }
 </style>

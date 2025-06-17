@@ -1,40 +1,5 @@
 <template>
   <div>
-    <v-card class="pa-4 mb-4">
-      <v-row>
-        <v-col cols="12" md="3">
-          <v-text-field v-model="nuevo.categoria" label="Producto" dense />
-        </v-col>
-        <v-col cols="12" md="2">
-          <v-text-field v-model="nuevo.text" label="Peso" type="number" dense />
-        </v-col>
-        <v-col cols="12" md="2">
-          <v-select
-            v-model="nuevo.uM"
-            :items="['kg', 'lb', 'Ml', 'L']"
-            label="Unidad"
-            dense
-          />
-        </v-col>
-        <v-col cols="12" md="2">
-          <v-select
-            v-model="nuevo.estado"
-            :items="['entrada', 'salida']"
-            label="Estado"
-            dense
-          />
-        </v-col>
-        <v-col cols="12" md="3" class="d-flex align-center">
-          <v-btn color="primary" @click="guardarRegistro" class="mr-2">
-            {{ editando ? "Actualizar" : "Agregar" }}
-          </v-btn>
-          <v-btn v-if="editando" color="grey" @click="cancelarEdicion">
-            Cancelar
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-card>
-
     <v-data-table-server
       :headers="headers"
       :items="registros"
@@ -64,6 +29,9 @@ import {
   crearRegistroOCR,
 } from "@/services/entradaSalidaProductos";
 
+// AGREGAR emit para comunicar con el padre
+const emit = defineEmits(['editar-en-formulario']);
+
 const loading = ref(false);
 const registros = ref<any[]>([]);
 const nuevo = ref({ categoria: "", text: "", uM: "kg", estado: "entrada", id: null });
@@ -87,9 +55,10 @@ async function cargarRegistros() {
   loading.value = false;
 }
 
+// ACTUALIZAR esta función para emitir al padre:
 function editarRegistro(registro: any) {
-  nuevo.value = { ...registro };
-  editando.value = true;
+  // Emitir al componente padre para que maneje la edición
+  emit('editar-en-formulario', registro);
 }
 
 function cancelarEdicion() {
@@ -128,4 +97,8 @@ async function eliminarRegistro(id: number) {
     await cargarRegistros();
   }
 }
+
+defineExpose({
+  cargarRegistros
+});
 </script>

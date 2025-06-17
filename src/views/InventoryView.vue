@@ -1,81 +1,31 @@
 <template>
   <div class="pa-4">
-
+    <!-- FORMULARIO -->
     <v-container class="d-flex justify-center" style="max-width: 1440px;">
       <div class="form-wrapper w-100">
         <v-row dense>
           <v-col cols="12" md="6">
-            <v-text-field
-              label="Código"
-              v-model="form.codigo"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-              class="w-100"
-            />
+            <v-text-field label="Código" v-model="form.codigo" variant="outlined" density="comfortable" hide-details class="w-100" />
           </v-col>
 
           <v-col cols="12" md="6">
-            <v-text-field
-              label="Nombre del Producto"
-              v-model="form.nombre_producto"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-              class="w-100"
-            />
+            <v-text-field label="Nombre del Producto" v-model="form.nombre_producto" variant="outlined" density="comfortable" hide-details class="w-100" />
           </v-col>
 
           <v-col cols="12" md="6">
-            <v-select
-              label="Categoría"
-              v-model="form.categoria"
-              :items="categorias"
-              item-title="nombre"
-              item-value="id"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-              class="w-100"
-            />
+            <v-select label="Categoría" v-model="form.categoria" :items="categorias" item-title="nombre" item-value="id" variant="outlined" density="comfortable" hide-details class="w-100" />
           </v-col>
 
           <v-col cols="12" md="6">
-            <v-text-field
-              label="Stock"
-              v-model="form.stock"
-              type="number"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-              class="w-100"
-            />
+            <v-text-field label="Stock" v-model="form.stock" type="number" variant="outlined" density="comfortable" hide-details class="w-100" />
           </v-col>
 
           <v-col cols="12" md="6">
-            <v-text-field
-              label="Stock Mínimo"
-              v-model="form.min_stock"
-              type="number"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-              class="w-100"
-            />
+            <v-text-field label="Stock Mínimo" v-model="form.min_stock" type="number" variant="outlined" density="comfortable" hide-details class="w-100" />
           </v-col>
 
           <v-col cols="12" md="6">
-            <v-select
-              label="Unidad de Medida"
-              v-model="form.unidad_medida"
-              :items="unidadesMedida"
-              item-title="nombre"
-              item-value="id"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-              class="w-100"
-            />
+            <v-select label="Unidad de Medida" v-model="form.unidad_medida" :items="unidadesMedida" item-title="nombre" item-value="id" variant="outlined" density="comfortable" hide-details class="w-100" />
           </v-col>
         </v-row>
 
@@ -83,6 +33,7 @@
           <v-btn color="primary" @click="validarFormulario" :loading="loading">
             {{ form.id ? 'Actualizar' : 'Guardar' }}
           </v-btn>
+          <v-btn color="error" @click="resetForm" :disabled="loading">Cancelar</v-btn>
         </div>
 
         <ConfirmDialog
@@ -95,21 +46,13 @@
       </div>
     </v-container>
 
-
+    <!-- BUSCADOR -->
     <v-container class="mx-auto" style="max-width: 1440px;">
-      <v-text-field
-        v-model="search"
-        label="Buscar por nombre"
-        clearable
-        density="comfortable"
-        variant="outlined"
-        hide-details
-        class="mb-4"
-        style="max-width: 500px;"
-      />
+      <v-text-field v-model="search" label="Buscar por nombre" clearable density="comfortable" variant="outlined" hide-details class="mb-4" style="max-width: 500px;" />
 
-      <!-- TABLA -->
+      <!-- TABLA: visible desde 768px -->
       <v-data-table-server
+        class="tabla-inventario elevation-1"
         v-model:page="pagination.page"
         v-model:items-per-page="pagination.itemsPerPage"
         :headers="headers"
@@ -117,7 +60,6 @@
         :items="filteredItems"
         :loading="loading"
         item-value="id"
-        class="elevation-1"
       >
         <template v-slot:item.categoria="{ item }">
           {{ item.categoria?.nombre }}
@@ -132,6 +74,26 @@
           </div>
         </template>
       </v-data-table-server>
+
+      <!-- CARDS: visibles hasta 767px -->
+      <v-row class="cards-inventario" dense>
+        <v-col cols="12" v-for="item in filteredItems" :key="item.id">
+          <v-card class="mb-3" elevation="2">
+            <v-card-text>
+              <div><strong>Código:</strong> {{ item.codigo }}</div>
+              <div><strong>Nombre:</strong> {{ item.nombre_producto ?? item.nombreProducto }}</div>
+              <div><strong>Categoría:</strong> {{ item.categoria?.nombre }}</div>
+              <div><strong>Stock:</strong> {{ item.stock }}</div>
+              <div><strong>Stock Mínimo:</strong> {{ item.min_stock }}</div>
+              <div><strong>Unidad de Medida:</strong> {{ item.unidadMedida?.nombre }}</div>
+            </v-card-text>
+            <v-card-actions class="d-flex justify-end">
+              <EditButtonComponent :item="item" @edit="editar" />
+              <DeleteButtonComponent :item="item" resource="inventario" @confirm-delete="eliminar" />
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
     </v-container>
 
     <!-- SNACKBAR -->
@@ -152,7 +114,6 @@ import UnidadMedidaService from '@/services/UnidadMedidaService'
 import EditButtonComponent from '@/components/button/EditComponent.vue'
 import DeleteButtonComponent from '@/components/button/DeleteComponent.vue'
 import ConfirmDialog from '@/components/ModalComponent.vue'
-
 
 const form = ref({
   id: null,
@@ -340,3 +301,21 @@ onMounted(async () => {
   unidadesMedida.value = await UnidadMedidaService.getAll()
 })
 </script>
+
+<style scoped>
+.tabla-inventario {
+  display: none;
+}
+.cards-inventario {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .tabla-inventario {
+    display: block;
+  }
+  .cards-inventario {
+    display: none;
+  }
+}
+</style>
