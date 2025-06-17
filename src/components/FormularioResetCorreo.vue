@@ -12,7 +12,6 @@
       Enviar enlace
     </v-btn>
 
-    <!-- Enlace de volver al login -->
     <div class="text-center mt-4">
       <a @click="router.push('/login')" class="text-primary text-decoration-underline" style="cursor: pointer;">
         ¿Recordaste tu contraseña? Inicia sesión
@@ -26,9 +25,18 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const correo = ref('')
+const mensajeError = ref('')
+const mensajeExito = ref('')
 const router = useRouter()
 
+const emit = defineEmits<{
+  (e: 'exito', msg: string): void
+}>()
+
 const enviar = async () => {
+  mensajeExito.value = ''
+  mensajeError.value = ''
+
   const res = await fetch('http://localhost:3333/solicitar-reset', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -38,10 +46,10 @@ const enviar = async () => {
   const data = await res.json()
 
   if (res.ok) {
-    window.location.href = `http://localhost:5173/reset/${data.enlace.split('/').pop()}`
+    mensajeExito.value = 'Correo enviado exitosamente. Revisa tu bandeja de entrada.'
+    emit('exito', mensajeExito.value)
   } else {
-    // Mostrar mensaje con Snackbar o similar
-    console.error(data.message)
+    mensajeError.value = data.message || 'Error al enviar el correo.'
   }
 }
 </script>

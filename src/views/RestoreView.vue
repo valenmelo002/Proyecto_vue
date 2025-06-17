@@ -20,7 +20,7 @@ const mensaje = ref('')
 const modalVisible = ref(false)
 
 function handleExito(msg: string) {
-  mensaje.value = msg
+  mensaje.value = msg || 'Revisa tu correo. Te hemos enviado un enlace para restablecer tu contraseña.'
   modalVisible.value = true
 }
 </script>

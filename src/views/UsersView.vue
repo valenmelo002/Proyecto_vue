@@ -1,15 +1,24 @@
 <template>
   <v-container class="pa-4" style="max-width: 1400px;" fluid>
+    <!-- FORMULARIO -->
     <div class="mb-6">
       <v-form ref="formRef">
         <v-row dense>
-          <v-col cols="4">
-            <v-text-field label="Nombre" v-model="form.nombre" :rules="[rules.required, rules.minName, rules.maxName]" />
+          <v-col cols="12" sm="6" md="4">
+            <v-text-field
+              label="Nombre"
+              v-model="form.nombre"
+              :rules="[rules.required, rules.minName, rules.maxName]"
+            />
           </v-col>
-          <v-col cols="4">
-            <v-text-field label="Apellido" v-model="form.apellido" :rules="[rules.required, rules.minName, rules.maxName]" />
+          <v-col cols="12" sm="6" md="4">
+            <v-text-field
+              label="Apellido"
+              v-model="form.apellido"
+              :rules="[rules.required, rules.minName, rules.maxName]"
+            />
           </v-col>
-          <v-col cols="4">
+          <v-col cols="12" sm="6" md="4">
             <v-select
               label="Tipo de Documento"
               :items="tiposDocumento"
@@ -20,19 +29,36 @@
               :rules="[rules.selectTipoDocumento]"
             />
           </v-col>
-          <v-col cols="4">
-            <v-text-field label="Número de Documento" v-model="form.numero_documento" :rules="[rules.required, rules.minNumberDocument, rules.maxNumberDocument]" />
+          <v-col cols="12" sm="6" md="4">
+            <v-text-field
+              label="Número de Documento"
+              v-model="form.numero_documento"
+              :rules="[rules.required, rules.minNumberDocument, rules.maxNumberDocument]"
+            />
           </v-col>
-          <v-col cols="4">
-            <v-text-field label="Correo" v-model="form.correo" :rules="[rules.required, rules.email]" />
+          <v-col cols="12" sm="6" md="4">
+            <v-text-field
+              label="Correo"
+              v-model="form.correo"
+              :rules="[rules.required, rules.email]"
+            />
           </v-col>
-          <v-col cols="4">
-            <v-text-field label="Teléfono" v-model="form.numero_telefono" :rules="[rules.required, rules.minNumberTelefono, rules.maxNumberTelefono]" />
+          <v-col cols="12" sm="6" md="4">
+            <v-text-field
+              label="Teléfono"
+              v-model="form.numero_telefono"
+              :rules="[rules.required, rules.minNumberTelefono, rules.maxNumberTelefono]"
+            />
           </v-col>
-          <v-col cols="4" v-if="mode === 'create'">
-            <v-text-field label="Contraseña" v-model="form.password" type="password" :rules="[rules.required, rules.password]" />
+          <v-col cols="12" sm="6" md="4" v-if="mode === 'create'">
+            <v-text-field
+              label="Contraseña"
+              v-model="form.password"
+              type="password"
+              :rules="[rules.required, rules.password]"
+            />
           </v-col>
-          <v-col cols="4">
+          <v-col cols="12" sm="6" md="4">
             <v-select
               label="Rol"
               :items="roles"
@@ -44,12 +70,16 @@
             />
           </v-col>
         </v-row>
+
+        <!-- Botones -->
         <div class="mt-4">
           <v-btn color="primary" @click="checkFormBeforeConfirm" :loading="loading" class="mr-2">
             {{ mode === 'create' ? 'Guardar' : 'Actualizar' }}
           </v-btn>
           <v-btn @click="resetForm">Cancelar</v-btn>
         </div>
+
+        <!-- Confirmación -->
         <ConfirmDialog
           v-model="confirmDialog"
           :title="mode === 'create' ? 'Confirmar creación' : 'Confirmar actualización'"
@@ -60,26 +90,50 @@
       </v-form>
     </div>
 
-    <v-data-table-server
-      class="mt-8"
-      v-model:items-per-page="itemsPerPage"
-      :headers="headers"
-      :items="serverItems"
-      :items-length="totalItems"
-      :loading="loading"
-      :search="search"
-      item-value="id"
-      @update:options="loadItems"
-    >
-      <template v-slot:item.acciones="{ item }">
-        <div class="d-flex ga-1">
+    <!-- TABLA (visible desde iPad mini en adelante) -->
+    <div class="d-none d-sm-flex">
+      <v-data-table-server
+        class="mt-8 w-100"
+        v-model:items-per-page="itemsPerPage"
+        :headers="headers"
+        :items="serverItems"
+        :items-length="totalItems"
+        :loading="loading"
+        :search="search"
+        item-value="id"
+        @update:options="loadItems"
+      >
+        <template v-slot:item.acciones="{ item }">
+          <div class="d-flex ga-1">
+            <EditButtonComponent :item="item" @edit="editItem" />
+            <DeleteButtonComponent :item="item" resource="usuario" @confirm-delete="deleteItem" />
+          </div>
+        </template>
+      </v-data-table-server>
+    </div>
+
+    <!-- TARJETAS (solo en móviles menores a 768px) -->
+    <div class="d-flex d-sm-none flex-column gap-4 mt-6">
+      <v-card
+        v-for="item in serverItems"
+        :key="item.id"
+        class="pa-4"
+        elevation="4"
+        rounded="lg"
+      >
+        <div class="text-subtitle-1 font-weight-bold">{{ item.nombre }} {{ item.apellido }}</div>
+        <div><strong>Correo:</strong> {{ item.correo }}</div>
+        <div><strong>Rol:</strong> {{ item.rol.nombre }}</div>
+        <div class="mt-2 d-flex justify-end">
           <EditButtonComponent :item="item" @edit="editItem" />
           <DeleteButtonComponent :item="item" resource="usuario" @confirm-delete="deleteItem" />
         </div>
-      </template>
-    </v-data-table-server>
+      </v-card>
+    </div>
   </v-container>
 </template>
+
+
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'

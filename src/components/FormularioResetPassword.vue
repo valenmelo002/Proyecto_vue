@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-form @submit.prevent="confirmar">
+    <v-form v-if="mostrarFormulario" @submit.prevent="confirmar">
       <v-text-field
         v-model="nueva"
         label="Nueva Contraseña"
@@ -25,14 +25,34 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+const props = defineProps<{
+  token: string
+}>()
 
 const nueva = ref('')
 const errores = ref<string[]>([])
 const mensajeError = ref('')
-const route = useRoute()
+const mostrarFormulario = ref(true)
 const router = useRouter()
+
+const emit = defineEmits<{
+  (e: 'exito', msg: string): void
+}>()
+
+// 🔍 Verificación automática del token al montar
+onMounted(async () => {
+  const res = await fetch(`http://localhost:3333/verificar-token/${props.token}`)
+  const data = await res.json()
+
+  if (!res.ok) {
+    mensajeError.value = data.message || 'Token inválido o expirado'
+    mostrarFormulario.value = false
+    setTimeout(() => router.push('/login'), 2500)
+  }
+})
 
 const confirmar = async () => {
   errores.value = []
@@ -43,19 +63,24 @@ const confirmar = async () => {
     return
   }
 
-  const token = route.params.token
   const res = await fetch('http://localhost:3333/confirmar-reset', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ token, nueva: nueva.value }),
+    body: JSON.stringify({ token: props.token, nueva: nueva.value }),
   })
 
   const data = await res.json()
 
   if (res.ok) {
-    router.push('/login')
+    emit('exito', 'Contraseña restablecida correctamente. Serás redirigido al login...')
+    setTimeout(() => router.push('/login'), 3500)
   } else {
-    mensajeError.value = data.message || 'Ocurrió un error'
+    const msg = data.message || 'Ocurrió un error'
+    mensajeError.value = msg
+
+    if (msg.includes('utilizado') || msg.includes('expirado')) {
+      setTimeout(() => router.push('/login'), 3500)
+    }
   }
 }
 </script>
