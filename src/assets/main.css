@@ -21,6 +21,10 @@ a,
   }
 }
 
+.v-input input {
+  border: none !important;
+}
+
 /*@media (min-width: 1024px) {
   body {
     display: flex;

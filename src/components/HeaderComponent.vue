@@ -1,14 +1,20 @@
 <template>
-  <header>
-    <img alt="fuego" class="logo" src="@/assets/fuego.jpeg" />
-  </header>
+  <div class="logo-wrapper">
+    <img alt="fuego" class="logo" src="@/assets/morichal.jpg" />
+  </div>
 </template>
 
 <style scoped>
-.logo {
+.logo-wrapper {
   display: flex;
-  margin: 0 auto 2rem;
-  width: 300px;
-  height: 190px;
+  justify-content: center;
+  padding-top: 20px;
+}
+
+.logo {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  object-fit: contain;
 }
 </style>

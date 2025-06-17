@@ -1,4 +1,3 @@
-// src/services/RecepcionService.ts
 const API_URL = "http://localhost:3333/recepcion"
 
 export default class RecepcionService {
@@ -82,9 +81,10 @@ export default class RecepcionService {
     page = 1,
     itemsPerPage = 10,
     sortBy = [] as { key: string; order: 'asc' | 'desc'}[],
-    search = {} as { folio?: string }
+    search = {} as { producto?: string }
   }) {
     const token = localStorage.getItem("token")
+    console.log('TOKEN QUE SE ESTÁ USANDO:', token)
     const sortKey = sortBy[0]?.key ?? 'fecha'
     const order = sortBy[0]?.order ?? 'asc'
 
@@ -95,8 +95,8 @@ export default class RecepcionService {
       order,
     })
 
-    if (search.folio) {
-      params.append('folio', search.folio)
+    if (search.producto) {
+      params.append('producto', search.producto)
     }
 
     const response = await fetch(`${API_URL}?${params.toString()}`, {
