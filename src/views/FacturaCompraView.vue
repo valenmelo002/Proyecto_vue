@@ -24,7 +24,7 @@
 
       <v-sheet border rounded>
         <FacturaCompraTable
-          :facturas="facturas"
+          :facturas="filteredFacturas"
           :headers="headers"
           @edit="editFactura"
           @delete="confirmDeleteFactura"
@@ -42,16 +42,24 @@
         :factura-id="facturaSeleccionada?.id"
         @detalle-agregado="cargarFacturas"
       />
+
+      <ModalComponent
+        v-model="showUpdateDialog"
+        title="Confirmar actualización"
+        message="¿Está seguro que desea actualizar este registro?"
+        @confirm="confirmUpdate"
+      />
     </v-card>
   </v-container>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
-import * as facturaService from "@/services/facturaCompraService";
+import * as facturaCompraService from "@/services/facturaCompraService";
 import FacturaCompraForm from "@/components/FacturaCompraForm.vue";
 import FacturaCompraTable from "@/components/FacturaCompraTable.vue";
 import FacturaCompraDetalleModal from "@/components/FacturaCompraDetalleModal.vue";
+import ModalComponent from "@/components/ModalComponent.vue";
 
 const facturas = ref([]);
 const search = ref("");
@@ -60,6 +68,8 @@ const showDetalleModal = ref(false);
 const facturaSeleccionada = ref(null);
 const showConfirmDialog = ref(false);
 const facturaIdToDelete = ref<string | number | null>(null);
+const showUpdateDialog = ref(false)
+const pendingUpdatePayload = ref<any>(null)
 
 const headers = [
   { title: 'Número Factura', key: 'numeroFactura' },
@@ -71,19 +81,31 @@ const headers = [
 ];
 
 async function cargarFacturas() {
-  facturas.value = await facturaService.getFacturas();
+  facturas.value = await facturaCompraService.getFacturas();
 }
 onMounted(cargarFacturas);
 
 async function handleSubmit(payload) {
-  if (form.value.id) {
-    await facturaService.updateFactura(String(form.value.id), payload);
-  } else {
-    const res = await facturaService.createFactura(payload);
-    form.value.id = res.id;
+  // Validaciones básicas
+  if (!payload.numeroFactura || !payload.nit || !payload.nombreEmpresa || !payload.direccionEmpresa) {
+    alert("Todos los campos son obligatorios.");
+    return;
   }
-  await cargarFacturas();
-  resetForm();
+  if (isNaN(Number(payload.numeroFactura)) || isNaN(Number(payload.nit))) {
+    alert("El número de factura y el NIT deben ser numéricos.");
+    return;
+  }
+
+  if (form.value.id) {
+    // Guardar el payload pendiente y mostrar el modal
+    pendingUpdatePayload.value = payload
+    showUpdateDialog.value = true
+  } else {
+    const res = await facturaCompraService.createFactura(payload);
+    form.value.id = res.id;
+    await cargarFacturas();
+    resetForm();
+  }
 }
 
 const filteredFacturas = computed(() => {
@@ -111,15 +133,25 @@ function abrirModalDetalle(factura) {
 }
 
 function confirmDeleteFactura(id) {
+  if (!confirm) return;
   facturaIdToDelete.value = id;
   showConfirmDialog.value = true;
 }
 
 async function deleteFacturaConfirmed() {
   if (facturaIdToDelete.value) {
-    await facturaService.deleteFactura(String(facturaIdToDelete.value));
+    await facturaCompraService.deleteFactura(String(facturaIdToDelete.value));
     await cargarFacturas();
     facturaIdToDelete.value = null;
+  }
+}
+
+async function confirmUpdate() {
+  if (form.value.id && pendingUpdatePayload.value) {
+    await facturaCompraService.updateFactura(String(form.value.id), pendingUpdatePayload.value);
+    await cargarFacturas();
+    resetForm();
+    pendingUpdatePayload.value = null;
   }
 }
 </script>

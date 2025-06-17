@@ -19,6 +19,7 @@
         <v-tooltip
           v-else
           location="top"
+          max-width="350"
         >
           <template #activator="{ props }">
             <v-btn
@@ -31,30 +32,30 @@
               <v-icon>mdi-eye</v-icon>
             </v-btn>
           </template>
-          <div style="min-width: 220px;">
-            <div v-for="detalle in item.detalles" :key="detalle.id" style="margin-bottom: 8px;">
-              <strong>{{ detalle.proveedor }} - {{ detalle.producto }}</strong><br>
-              Cantidad: {{ detalle.cantidad }}<br>
-              Precio: {{ detalle.precio }}<br>
-              Subtotal: {{ detalle.subtotal }}
+          <div style="min-width: 250px;">
+            <div
+              v-for="detalle in item.detalles"
+              :key="detalle.id"
+              style="margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px;"
+            >
+              <div><strong>Proveedor:</strong> {{ detalle.proveedor }}</div>
+              <div><strong>Producto:</strong> {{ detalle.producto }}</div>
+              <div><strong>Cantidad:</strong> {{ detalle.cantidad }}</div>
+              <div><strong>Precio:</strong> {{ detalle.precio }}</div>
+              <div><strong>Subtotal:</strong> {{ detalle.subtotal }}</div>
+              <!-- Agrega aquí más campos si tu detalle tiene más información -->
             </div>
           </div>
         </v-tooltip>
       </div>
     </template>
     <template #item.actions="{ item }">
-      <v-icon
-        color="primary"
-        icon="mdi-pencil"
-        size="small"
-        @click="$emit('edit', item)"
-      ></v-icon>
-      <v-icon
-        color="error"
-        icon="mdi-delete"
-        size="small"
-        @click="eliminarFactura(item.id)"
-      ></v-icon>
+      <EditComponent :item="item" @edit="$emit('edit', $event)" />
+      <DeleteComponent
+        :item="{ ...item, id: Number(item.id) }"
+        resource="factura"
+        @confirm-delete="confirmarYEliminar(item.id)"
+      />
     </template>
     <template #no-data>
       <v-btn prepend-icon="mdi-backup-restore" rounded="lg" text="Recargar" variant="text" border @click="$emit('reload')"></v-btn>
@@ -63,7 +64,9 @@
 </template>
 
 <script setup lang="ts">
-import * as facturaService from "@/services/facturaCompraService";
+import * as facturaCompraService from "@/services/facturaCompraService";
+import EditComponent from "@/components/button/EditComponent.vue";
+import DeleteComponent from "@/components/button/DeleteComponent.vue";
 
 interface Detalle {
   id: number | string;
@@ -85,9 +88,10 @@ const props = defineProps<{
   headers: any[];
 }>();
 
-function eliminarFactura(id: number | string) {
-  facturaService.deleteFactura(String(id)).then(() => {
-    // Opcional: puedes emitir un evento para recargar la tabla en el padre
+function confirmarYEliminar(id: number | string) {
+  if (!confirm) return;
+  facturaCompraService.deleteFactura(String(id)).then(() => {
+    // Puedes emitir un evento para recargar la tabla
     // $emit('reload')
     window.location.reload(); // O recarga la tabla de otra forma
   });
