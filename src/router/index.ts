@@ -13,6 +13,7 @@ import entradaSalidaProductosView from '@/views/imagenGramera.vue';
 import PerfilView from '@/views/PerfilView.vue';
 import UsersView from '@/views/UsersView.vue';
 import WireframeLayout from '@/layouts/WireframeLayout.vue';
+import FacturaCompraView from '@/views/FacturaCompraView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -85,6 +86,12 @@ const router = createRouter({
       path: '/zona-pesaje',
       name: 'zona-pesaje',
       component: entradaSalidaProductosView,
+      meta: { layout: 'WireframeLayout' }
+    },
+    {
+      path: '/facturasCompra',
+      name: 'facturasCompra',
+      component: FacturaCompraView,
       meta: { layout: 'WireframeLayout' }
     },
     {
