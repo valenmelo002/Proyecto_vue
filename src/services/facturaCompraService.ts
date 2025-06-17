@@ -28,6 +28,7 @@ export async function updateFactura(id: string, data: Record<string, any>) {
 }
 
 export async function deleteFactura(id: string) {
+  console.log('Enviando DELETE a:', `${API_URL}/${id}`);
   const res = await axios.delete(`${API_URL}/${id}`)
   return res.data
 }
