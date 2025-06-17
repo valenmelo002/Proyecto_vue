@@ -8,9 +8,9 @@
             <v-text-field
               label="Nombre del producto"
               v-model="form.nombre"
+              :rules="[rules.required, rules.nombre]"
               variant="outlined"
               density="comfortable"
-              hide-details
               class="w-100"
             />
           </v-col>
@@ -19,9 +19,9 @@
             <v-textarea
               label="Descripción"
               v-model="form.descripcion"
+              :rules="[rules.descripcion]"
               variant="outlined"
               density="comfortable"
-              hide-details
               class="w-100"
               rows="2"
             />
@@ -31,10 +31,10 @@
             <v-text-field
               label="Precio"
               v-model.number="form.precio"
+              :rules="[rules.required, rules.precio]"
               type="number"
               variant="outlined"
               density="comfortable"
-              hide-details
               class="w-100"
             />
           </v-col>
@@ -46,9 +46,9 @@
               item-value="id"
               item-title="nombre"
               v-model="form.categoria_id"
+              :rules="[rules.required]"
               variant="outlined"
               density="comfortable"
-              hide-details
               class="w-100"
             />
           </v-col>
@@ -60,9 +60,9 @@
               item-value="id"
               item-title="nombre"
               v-model="form.unidad_medida_id"
+              :rules="[rules.required]"
               variant="outlined"
               density="comfortable"
-              hide-details
               class="w-100"
             />
           </v-col>
@@ -162,11 +162,6 @@
         </v-col>
       </v-row>
     </v-container>
-
-    <!-- SNACKBAR -->
-    <v-snackbar v-model="snackbar" :color="snackbarColor" timeout="3000">
-      {{ snackbarMessage }}
-    </v-snackbar>
   </div>
 </template>
 
@@ -179,27 +174,13 @@ import ConfirmDialog from '@/components/ModalComponent.vue'
 import EditButtonComponent from '@/components/button/EditComponent.vue'
 import DeleteButtonComponent from '@/components/button/DeleteComponent.vue'
 
-const headers = ref([
-  { title: 'Nombre', key: 'nombre' },
-  { title: 'Descripción', key: 'descripcion' },
-  { title: 'Precio', key: 'precio' },
-  { title: 'Categoría', key: 'categoria.nombre' },
-  { title: 'Unidad', key: 'unidadMedida.nombre' },
-  { title: 'Disponible', key: 'disponible' },
-  { title: 'Acciones', key: 'acciones', sortable: false }
-])
+const rules = {
+  required: (v: any) => !!v || 'Este campo es obligatorio',
+  nombre: (v: string) => v.length >= 3 || 'Debe tener mínimo 3 caracteres',
+  descripcion: (v: string) => !v || v.length <= 40 || 'Máximo 40 caracteres',
+  precio: (v: number) => v > 0 && Number.isInteger(v) || 'Debe ser un número entero positivo',
+}
 
-const itemsPerPage = ref(5)
-const serverItems = ref([])
-const totalItems = ref(0)
-const loading = ref(false)
-const name = ref('')
-const search = ref('')
-const currentOptions = ref({ page: 1, itemsPerPage: 5, sortBy: [] })
-const snackbar = ref(false)
-const snackbarMessage = ref('')
-const snackbarColor = ref('success')
-const mode = ref<'create' | 'update'>('create')
 const form = ref({
   id: null,
   nombre: '',
@@ -209,16 +190,56 @@ const form = ref({
   unidad_medida_id: null,
   disponible: true
 })
+
+const mode = ref<'create' | 'update'>('create')
+const loading = ref(false)
 const confirmDialog = ref(false)
+const name = ref('')
+const search = ref('')
+const itemsPerPage = ref(5)
+const headers = ref([
+  { title: 'Nombre', key: 'nombre' },
+  { title: 'Descripción', key: 'descripcion' },
+  { title: 'Precio', key: 'precio' },
+  { title: 'Categoría', key: 'categoria.nombre' },
+  { title: 'Unidad', key: 'unidadMedida.nombre' },
+  { title: 'Disponible', key: 'disponible' },
+  { title: 'Acciones', key: 'acciones', sortable: false }
+])
+const serverItems = ref([])
+const totalItems = ref(0)
 const categorias = ref([])
 const unidades = ref([])
 
-async function loadSelects() {
+function handleClickGuardar() {
+  confirmDialog.value = true
+}
+
+async function submit() {
+  confirmDialog.value = false
+  loading.value = true
   try {
-    categorias.value = await CategoriaService.getAll()
-    unidades.value = await UnidadMedidaService.getAll()
-  } catch (e) {
-    console.error('Error cargando selects:', e)
+    const data = {
+      nombre: form.value.nombre,
+      descripcion: form.value.descripcion,
+      precio: form.value.precio,
+      categoria_id: form.value.categoria_id,
+      unidad_medida_id: form.value.unidad_medida_id,
+      disponible: form.value.disponible
+    }
+
+    if (mode.value === 'create') {
+      await ProductoService.create(data)
+    } else {
+      await ProductoService.update(form.value.id!, data)
+    }
+
+    resetForm()
+    loadItems(currentOptions.value)
+  } catch (error) {
+    console.error('Error al guardar:', error)
+  } finally {
+    loading.value = false
   }
 }
 
@@ -235,49 +256,6 @@ function resetForm() {
   mode.value = 'create'
 }
 
-function handleClickGuardar() {
-  if (!form.value.nombre || !form.value.descripcion || !form.value.precio || !form.value.categoria_id || !form.value.unidad_medida_id) {
-    snackbarMessage.value = 'Por favor completa todos los campos obligatorios.'
-    snackbarColor.value = 'error'
-    snackbar.value = true
-    return
-  }
-  confirmDialog.value = true
-}
-
-async function submit() {
-  confirmDialog.value = false
-  loading.value = true
-  try {
-    const data = {
-      nombre: form.value.nombre,
-      descripcion: form.value.descripcion,
-      precio: form.value.precio,
-      categoria_id: form.value.categoria_id,
-      unidad_medida_id: form.value.unidad_medida_id,
-      disponible: form.value.disponible
-    }
-    if (mode.value === 'create') {
-      await ProductoService.create(data)
-      snackbarMessage.value = 'Producto creado con éxito.'
-    } else {
-      await ProductoService.update(form.value.id!, data)
-      snackbarMessage.value = 'Producto actualizado con éxito.'
-    }
-    snackbarColor.value = 'success'
-    snackbar.value = true
-    resetForm()
-    loadItems(currentOptions.value)
-  } catch (e) {
-    console.error('Error al guardar:', e)
-    snackbarMessage.value = 'Ocurrió un error al guardar.'
-    snackbarColor.value = 'error'
-    snackbar.value = true
-  } finally {
-    loading.value = false
-  }
-}
-
 function editItem(item: any) {
   form.value = {
     id: item.id,
@@ -292,45 +270,49 @@ function editItem(item: any) {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-async function deleteItem(item: { id: number }) {
+async function deleteItem(item: any) {
   try {
     await ProductoService.destroy(item.id)
-    snackbarMessage.value = 'Producto eliminado con éxito.'
-    snackbarColor.value = 'success'
-    snackbar.value = true
     loadItems(currentOptions.value)
   } catch (error) {
-    console.error('Error al eliminar el producto:', error)
-    snackbarMessage.value = 'Ocurrió un error al eliminar.'
-    snackbarColor.value = 'error'
-    snackbar.value = true
+    console.error('Error al eliminar producto:', error)
   }
 }
 
-function loadItems(options: any) {
+const currentOptions = ref({ page: 1, itemsPerPage: 5, sortBy: [] })
+
+async function loadItems(options: any) {
   currentOptions.value = options
   loading.value = true
-  ProductoService.getPaginated({
-    page: options.page,
-    itemsPerPage: options.itemsPerPage,
-    sortBy: options.sortBy,
-    search: { name: name.value }
-  })
-    .then(({ items, total }) => {
-      serverItems.value = items
-      totalItems.value = total
+  try {
+    const { items, total } = await ProductoService.getPaginated({
+      page: options.page,
+      itemsPerPage: options.itemsPerPage,
+      sortBy: options.sortBy,
+      search: { name: name.value }
     })
-    .catch((error) => {
-      console.error('Error al cargar productos:', error)
-    })
-    .finally(() => {
-      loading.value = false
-    })
+    serverItems.value = items
+    totalItems.value = total
+  } catch (error) {
+    console.error('Error al cargar productos:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+async function loadSelects() {
+  try {
+    categorias.value = await CategoriaService.getAll()
+    unidades.value = await UnidadMedidaService.getAll()
+  } catch (error) {
+    console.error('Error al cargar selects:', error)
+  }
 }
 
 watch(name, () => {
   search.value = Date.now().toString()
 })
+
 onMounted(() => {
   loadItems(currentOptions.value)
   loadSelects()
