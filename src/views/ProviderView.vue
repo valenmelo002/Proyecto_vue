@@ -3,66 +3,68 @@
     <!-- FORMULARIO RESPONSIVO -->
     <v-container class="d-flex justify-center px-2" style="max-width: 1440px;">
       <div class="form-wrapper w-100" style="max-width: 960px;">
-        <v-row dense>
-          <v-col cols="12" md="6">
-            <v-text-field
-              label="Nombre"
-              v-model="form.nombre"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-              class="w-100"
-            />
-          </v-col>
-          <v-col cols="12" md="6">
-            <v-text-field
-              label="Teléfono"
-              v-model="form.telefono"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-              class="w-100"
-            />
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              label="Correo electrónico"
-              v-model="form.correo"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-              class="w-100"
-            />
-          </v-col>
-          <v-col cols="12">
-            <v-textarea
-              label="Dirección"
-              v-model="form.direccion"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-              class="w-100"
-              rows="2"
-            />
-          </v-col>
-        </v-row>
+        <v-form ref="formRef" v-model="formIsValid">
+          <v-row dense>
+            <v-col cols="12" md="6">
+              <v-text-field
+                label="Nombre"
+                v-model="form.nombre"
+                :rules="[rules.required, rules.minName, rules.maxName]"
+                variant="outlined"
+                density="comfortable"
+                class="w-100"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                label="Teléfono"
+                v-model="form.telefono"
+                :rules="[rules.required, rules.telefono]"
+                variant="outlined"
+                density="comfortable"
+                class="w-100"
+              />
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                label="Correo electrónico"
+                v-model="form.correo"
+                :rules="[rules.required, rules.email]"
+                variant="outlined"
+                density="comfortable"
+                class="w-100"
+              />
+            </v-col>
+            <v-col cols="12">
+              <v-textarea
+                label="Dirección"
+                v-model="form.direccion"
+                :rules="[rules.required, rules.minDireccion, rules.maxDireccion]"
+                variant="outlined"
+                density="comfortable"
+                class="w-100"
+                rows="2"
+              />
+            </v-col>
+          </v-row>
 
-        <div class="d-flex justify-center ga-2 mt-4 mb-6 flex-wrap">
-          <v-btn color="primary" @click="validarFormulario" :loading="loading">
-            {{ mode === 'create' ? 'Guardar' : 'Actualizar' }}
-          </v-btn>
-          <v-btn color="error" @click="resetForm" class="ml-3">Cancelar</v-btn>
-        </div>
+          <div class="d-flex justify-center ga-2 mt-4 mb-6 flex-wrap">
+            <v-btn color="primary" @click="validarFormulario" :loading="loading">
+              {{ mode === 'create' ? 'Guardar' : 'Actualizar' }}
+            </v-btn>
+            <v-btn color="error" @click="resetForm" class="ml-3">Cancelar</v-btn>
+          </div>
 
-        <ConfirmDialog
-          v-model="confirmDialog"
-          :title="mode === 'create' ? 'Confirmar creación' : 'Confirmar actualización'"
-          :message="mode === 'create'
-            ? '¿Desea guardar este proveedor?'
-            : '¿Desea actualizar la información del proveedor?'"
-          @confirm="submit"
-          @cancel="confirmDialog = false"
-        />
+          <ConfirmDialog
+            v-model="confirmDialog"
+            :title="mode === 'create' ? 'Confirmar creación' : 'Confirmar actualización'"
+            :message="mode === 'create'
+              ? '¿Desea guardar este proveedor?'
+              : '¿Desea actualizar la información del proveedor?'"
+            @confirm="submit"
+            @cancel="confirmDialog = false"
+          />
+        </v-form>
       </div>
     </v-container>
 
@@ -79,7 +81,6 @@
         style="max-width: 500px;"
       />
 
-      <!-- Versión de tabla para pantallas grandes -->
       <div class="d-none d-md-block">
         <v-data-table-server
           v-model:items-per-page="itemsPerPage"
@@ -101,7 +102,6 @@
         </v-data-table-server>
       </div>
 
-      <!-- Versión de tarjetas para pantallas pequeñas -->
       <div class="d-md-none d-flex flex-column ga-3">
         <v-card
           v-for="item in serverItems"
@@ -131,7 +131,6 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
 import ProveedorService from '@/services/ProveedorService'
@@ -139,6 +138,18 @@ import ConfirmDialog from '@/components/ModalComponent.vue'
 import EditButtonComponent from '@/components/button/EditComponent.vue'
 import DeleteButtonComponent from '@/components/button/DeleteComponent.vue'
 
+const formRef = ref()
+const formIsValid = ref(false)
+
+const rules = {
+  required: (v: any) => !!v || 'Este campo es obligatorio',
+  minName: (v: string) => v.length >= 3 || 'Mínimo 3 caracteres',
+  maxName: (v: string) => v.length <= 40 || 'Máximo 40 caracteres',
+  telefono: (v: string) => /^\d{7,10}$/.test(v) || 'Debe tener entre 7 y 10 dígitos',
+  email: (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || 'Debe ser un correo válido',
+  minDireccion: (v: string) => v.length >= 5 || 'Mínimo 5 caracteres',
+  maxDireccion: (v: string) => v.length <= 60 || 'Máximo 60 caracteres',
+}
 
 const headers = ref([
   { title: 'Nombre', key: 'nombre' },
@@ -160,7 +171,6 @@ const currentOptions = ref({
   sortBy: [],
 })
 
-
 const snackbar = ref({
   show: false,
   message: '',
@@ -179,7 +189,6 @@ const showError = (msg: string) => {
   snackbar.value.show = true
 }
 
-// Formulario
 const mode = ref<'create' | 'update'>('create')
 const form = ref({
   id: null,
@@ -201,17 +210,14 @@ function resetForm() {
   mode.value = 'create'
 }
 
-
 function validarFormulario() {
-  const campos = [form.value.nombre, form.value.telefono, form.value.correo, form.value.direccion]
-  const hayVacios = campos.some(campo => campo === '' || campo === null)
-
-  if (hayVacios) {
-    showError('Por favor completa todos los campos obligatorios')
-    return
-  }
-
-  confirmDialog.value = true
+  formRef.value?.validate().then((valid: boolean) => {
+    if (valid) {
+      confirmDialog.value = true
+    } else {
+      showError('Por favor corrige los errores del formulario')
+    }
+  })
 }
 
 async function submit() {
@@ -284,7 +290,6 @@ function loadItems(options: any) {
       loading.value = false
     })
 }
-
 
 watch(name, () => {
   search.value = Date.now().toString()
