@@ -41,7 +41,6 @@
       <v-list-item prepend-icon="mdi-scale-balance" title="Zona Pesaje" to="/zona-pesaje" link @click="closeDrawer" />
       <v-list-item prepend-icon="mdi-file-document-edit" title="Factura Compra" to="/facturasCompra" link @click="closeDrawer" />
 
-
       <!-- Grupo de configuración -->
       <v-list-group
         value="Configuración"

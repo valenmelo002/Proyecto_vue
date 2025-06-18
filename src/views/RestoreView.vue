@@ -1,15 +1,29 @@
 <template>
-  <div class="container">
-    <div class="form-container">
-      <form>
-        <input type="email" placeholder="Email" />
-        <button type="button">Restablecer contraseña</button>
-
-        <p><Router-link to="/Login">¿Recuerdas tu contraseña?</Router-link></p>
-      </form>
-    </div>
-  </div>
+  <v-container class="py-10" max-width="500">
+    <h2 class="text-h5 text-center mb-4 text-black">Recuperar Contraseña</h2>
+      <FormularioResetCorreo @exito="handleExito" />
+    <ModalComponent
+      v-model="modalVisible"
+      title="Éxito"
+      :message="mensaje"
+      @confirm="modalVisible = false"
+    />
+  </v-container>
 </template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import FormularioResetCorreo from '@/components/FormularioResetCorreo.vue'
+import ModalComponent from '@/components/ModalComponent.vue'
+
+const mensaje = ref('')
+const modalVisible = ref(false)
+
+function handleExito(msg: string) {
+  mensaje.value = msg || 'Revisa tu correo. Te hemos enviado un enlace para restablecer tu contraseña.'
+  modalVisible.value = true
+}
+</script>
 
 <style>
 .container {
@@ -40,7 +54,7 @@ input {
 }
 
 button {
-  background: #bb71e8;
+  background: #0b44be;
   color: white;
   padding: 15px;
   border: none;
