@@ -99,7 +99,6 @@ const router = createRouter({
       name: 'usuarios',
       component: UsersView,
       meta: { layout: 'WireframeLayout' }
-    },
     }
   ]
 });
