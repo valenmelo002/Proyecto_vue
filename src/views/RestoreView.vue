@@ -54,7 +54,7 @@ input {
 }
 
 button {
-  background: #bb71e8;
+  background: #0b44be;
   color: white;
   padding: 15px;
   border: none;
