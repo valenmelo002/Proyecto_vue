@@ -86,16 +86,55 @@ async function cargarFacturas() {
 onMounted(cargarFacturas);
 
 async function handleSubmit(payload) {
-  // Validaciones básicas
-  if (!payload.numeroFactura || !payload.nit || !payload.nombreEmpresa || !payload.direccionEmpresa) {
-    alert("Todos los campos son obligatorios.");
-    return;
-  }
-  if (isNaN(Number(payload.numeroFactura)) || isNaN(Number(payload.nit))) {
-    alert("El número de factura y el NIT deben ser numéricos.");
+  // Validación: NIT
+  if (
+    payload.nit === undefined ||
+    payload.nit === null ||
+    payload.nit === "" ||
+    isNaN(Number(payload.nit)) ||
+    Number(payload.nit) <= 0 ||
+    !Number.isInteger(Number(payload.nit))
+  ) {
+    alert("El NIT es obligatorio, debe ser un número entero positivo.");
     return;
   }
 
+  // Validación: Número de factura (obligatorio)
+  if (
+    payload.numeroFactura === undefined ||
+    payload.numeroFactura === null ||
+    payload.numeroFactura === "" ||
+    isNaN(Number(payload.numeroFactura)) ||
+    Number(payload.numeroFactura) <= 0 ||
+    !Number.isInteger(Number(payload.numeroFactura))
+  ) {
+    alert("El número de factura es obligatorio y debe ser un número entero positivo.");
+    return;
+  }
+
+  // Validación: Nombre empresa
+  if (
+    !payload.nombreEmpresa ||
+    typeof payload.nombreEmpresa !== "string" ||
+    payload.nombreEmpresa.trim().length < 3 ||
+    payload.nombreEmpresa.trim().length > 255
+  ) {
+    alert("El nombre de la empresa es obligatorio, mínimo 3 y máximo 255 caracteres.");
+    return;
+  }
+
+  // Validación: Dirección empresa
+  if (
+    !payload.direccionEmpresa ||
+    typeof payload.direccionEmpresa !== "string" ||
+    payload.direccionEmpresa.trim().length < 3 ||
+    payload.direccionEmpresa.trim().length > 255
+  ) {
+    alert("La dirección de la empresa es obligatoria, mínimo 3 y máximo 255 caracteres.");
+    return;
+  }
+
+  // Si pasa las validaciones, continúa con el flujo normal
   if (form.value.id) {
     // Guardar el payload pendiente y mostrar el modal
     pendingUpdatePayload.value = payload

@@ -45,8 +45,68 @@ function close() {
   dialog.value = false;
 }
 
+function validarDetalle() {
+  // proveedor_id (obligatorio)
+  if (
+    detalle.value.proveedor_id === "" ||
+    isNaN(Number(detalle.value.proveedor_id)) ||
+    Number(detalle.value.proveedor_id) <= 0 ||
+    !Number.isInteger(Number(detalle.value.proveedor_id))
+  ) {
+    alert("El proveedor es obligatorio y debe ser un número entero positivo.");
+    return false;
+  }
+
+  // producto_id (obligatorio)
+  if (
+    detalle.value.producto_id === "" ||
+    isNaN(Number(detalle.value.producto_id)) ||
+    Number(detalle.value.producto_id) <= 0 ||
+    !Number.isInteger(Number(detalle.value.producto_id))
+  ) {
+    alert("El producto es obligatorio y debe ser un número entero positivo.");
+    return false;
+  }
+
+  // cantidad (obligatorio)
+  if (
+    detalle.value.cantidad === "" ||
+    isNaN(Number(detalle.value.cantidad)) ||
+    Number(detalle.value.cantidad) <= 0 ||
+    !Number.isInteger(Number(detalle.value.cantidad))
+  ) {
+    alert("La cantidad es obligatoria y debe ser un número entero positivo.");
+    return false;
+  }
+
+  // precio (obligatorio)
+  if (
+    detalle.value.precio === "" ||
+    isNaN(Number(detalle.value.precio)) ||
+    Number(detalle.value.precio) <= 0 ||
+    !Number.isInteger(Number(detalle.value.precio))
+  ) {
+    alert("El precio es obligatorio y debe ser un número entero positivo.");
+    return false;
+  }
+
+  // subtotal (obligatorio)
+  if (
+    detalle.value.subtotal === "" ||
+    isNaN(Number(detalle.value.subtotal)) ||
+    Number(detalle.value.subtotal) <= 0 ||
+    !Number.isInteger(Number(detalle.value.subtotal))
+  ) {
+    alert("El subtotal es obligatorio y debe ser un número entero positivo.");
+    return false;
+  }
+
+  return true;
+}
+
 async function guardarDetalle() {
   if (!props.facturaId) return;
+  if (!validarDetalle()) return;
   await facturaService.createDetalle({
     factura_compras_id: props.facturaId,
     ...detalle.value,
