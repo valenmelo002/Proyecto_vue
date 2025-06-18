@@ -1,6 +1,6 @@
 <template>
-  <v-container class="py-8" style="background: #fff; min-height: 100vh;">
-    <v-card class="pa-6">
+  <v-container class="py-8 main-container-responsive" style="background: #fff; min-height: 100vh;">
+    <v-card class="pa-6 main-card-responsive">
       <FacturaCompraForm
         :form="form"
         :is-editing="!!form.id"
@@ -9,7 +9,7 @@
         @open-detalle="abrirModalDetalle"
       />
 
-        <!-- Buscador antes de la tabla -->
+      <!-- Buscador antes de la tabla -->
       <v-row class="mb-4" justify="center">
         <v-col cols="12" md="6">
           <v-text-field
@@ -31,10 +31,10 @@
           @agregar-detalle="abrirModalDetalle"
         />
 
-      <ConfirmDialog
-        v-model="showConfirmDialog"
-        @confirm="deleteFacturaConfirmed"
-      />
+        <ConfirmDialog
+          v-model="showConfirmDialog"
+          @confirm="deleteFacturaConfirmed"
+        />
       </v-sheet>
 
       <FacturaCompraDetalleModal
@@ -194,3 +194,23 @@ async function confirmUpdate() {
   }
 }
 </script>
+
+<style scoped>
+.main-container-responsive {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+.main-card-responsive {
+  max-width: 1100px;
+  margin: auto;
+}
+@media (max-width: 900px) {
+  .main-container-responsive {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  .main-card-responsive {
+    padding: 16px;
+  }
+}
+</style>

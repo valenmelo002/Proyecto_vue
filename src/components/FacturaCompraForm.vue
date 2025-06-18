@@ -1,5 +1,5 @@
 <template>
-  <v-form @submit.prevent="emitSubmit" class="pa-4" style="max-width: 500px; margin: auto;">
+  <v-form @submit.prevent="emitSubmit" class="pa-4 form-responsive">
     <v-row dense>
       <v-col cols="12" sm="6">
         <v-text-field
@@ -95,3 +95,16 @@ function emitReset() {
   emit("reset");
 }
 </script>
+
+<style scoped>
+.form-responsive {
+  max-width: 500px;
+  margin: auto;
+}
+@media (max-width: 600px) {
+  .form-responsive {
+    padding: 8px !important;
+    max-width: 100%;
+  }
+}
+</style>

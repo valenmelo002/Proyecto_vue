@@ -3,11 +3,23 @@
     <v-card>
       <v-card-title>Agregar Detalle</v-card-title>
       <v-card-text>
-        <v-text-field v-model="detalle.proveedor_id" label="Proveedor" required />
-        <v-text-field v-model="detalle.producto_id" label="Producto" required />
-        <v-text-field v-model="detalle.cantidad" label="Cantidad" type="number" required />
-        <v-text-field v-model="detalle.precio" label="Precio" type="number" required />
-        <v-text-field v-model="detalle.subtotal" label="Subtotal" type="number" required />
+        <v-row dense>
+          <v-col cols="12" sm="6">
+            <v-text-field v-model="detalle.proveedor_id" label="Proveedor" required />
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-text-field v-model="detalle.producto_id" label="Producto" required />
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-text-field v-model="detalle.cantidad" label="Cantidad" type="number" required />
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-text-field v-model="detalle.precio" label="Precio" type="number" required />
+          </v-col>
+          <v-col cols="12" sm="12">
+            <v-text-field v-model="detalle.subtotal" label="Subtotal" type="number" required />
+          </v-col>
+        </v-row>
       </v-card-text>
       <v-card-actions>
         <v-btn text @click="close">Cancelar</v-btn>
@@ -115,3 +127,11 @@ async function guardarDetalle() {
   close();
 }
 </script>
+
+<style scoped>
+@media (max-width: 600px) {
+  .v-card-text {
+    padding: 8px !important;
+  }
+}
+</style>
