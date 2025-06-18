@@ -39,8 +39,8 @@
                 :key="detalle.id"
                 style="margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px;"
               >
-                <div><strong>Proveedor:</strong> {{ detalle.proveedor }}</div>
-                <div><strong>Producto:</strong> {{ detalle.producto }}</div>
+                <div><strong>Proveedor:</strong> {{ detalle.proveedor_id }}</div>
+                <div><strong>Producto:</strong> {{ detalle.producto_id }}</div>
                 <div><strong>Cantidad:</strong> {{ detalle.cantidad }}</div>
                 <div><strong>Precio:</strong> {{ detalle.precio }}</div>
                 <div><strong>Subtotal:</strong> {{ detalle.subtotal }}</div>
@@ -72,8 +72,8 @@ import DeleteComponent from "@/components/button/DeleteComponent.vue";
 
 interface Detalle {
   id: number | string;
-  proveedor: string;
-  producto: string;
+  proveedor_id: number;
+  producto_id: number;
   cantidad: number;
   precio: number;
   subtotal: number;
