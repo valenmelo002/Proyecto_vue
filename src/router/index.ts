@@ -100,6 +100,7 @@ const router = createRouter({
       component: UsersView,
       meta: { layout: 'WireframeLayout' }
     },
+    }
   ]
 });
 

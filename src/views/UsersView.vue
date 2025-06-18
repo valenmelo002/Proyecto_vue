@@ -34,13 +34,15 @@
           </v-col>
           <v-col cols="4">
             <v-select
-              label="Rol"
+              label="Roles"
               :items="roles"
               item-value="id"
               item-title="nombre"
-              v-model="form.role_id"
+              v-model="form.role_ids"
               variant="outlined"
-              :rules="[rules.selectRole]"
+              multiple
+              chips
+              :rules="[v => v?.length > 0 || 'Debe seleccionar al menos un rol']"
             />
           </v-col>
         </v-row>
@@ -71,6 +73,20 @@
       item-value="id"
       @update:options="loadItems"
     >
+      <template v-slot:item.roles="{ item }">
+        <div class="d-flex flex-wrap ga-1">
+          <v-chip
+            v-for="(rol, index) in item.roles"
+            :key="index"
+            :color="getRoleColor(rol)"
+            class="text-white"
+            size="small"
+          >
+            {{ rol }}
+          </v-chip>
+        </div>
+      </template>
+
       <template v-slot:item.acciones="{ item }">
         <div class="d-flex ga-1">
           <EditButtonComponent :item="item" @edit="editItem" />
@@ -95,7 +111,7 @@ const headers = ref([
   { title: 'Nombre', key: 'nombre' },
   { title: 'Apellido', key: 'apellido' },
   { title: 'Correo', key: 'correo' },
-  { title: 'Rol', key: 'rol.nombre' },
+  { title: 'Roles', key: 'roles', sortable: false },
   { title: 'Acciones', key: 'acciones', sortable: false },
 ])
 
@@ -118,11 +134,11 @@ const rules = {
   email: (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || 'Correo inválido',
   password: (v: string) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/.test(v) || 'Debe tener mayúscula, minúscula, número y símbolo',
   selectTipoDocumento: (v: any) => v !== null || 'Debe seleccionar un tipo de documento',
-  selectRole: (v: any) => v !== null || 'Debe seleccionar un rol',
 }
 
 const mode = ref<'create' | 'update'>('create')
 const confirmDialog = ref(false)
+
 const form = ref({
   id: null,
   nombre: '',
@@ -132,11 +148,25 @@ const form = ref({
   correo: '',
   password: '',
   numero_telefono: '',
-  role_id: null,
+  role_ids: [] as number[],
 })
 
 const roles = ref([])
 const tiposDocumento = ref([])
+
+function getRoleColor(roleName: string): string {
+  const colorMap: Record<string, string> = {
+    Administrador: 'deep-purple',
+    Cajero: 'indigo',
+    Cocinero: 'green',
+    Mesero: 'cyan',
+    Estudiante: 'light-green',
+    Profesor: 'blue',
+    Recepcionista: 'orange',
+    Administrativo: 'purple',
+  }
+  return colorMap[roleName] || 'grey'
+}
 
 async function loadSelects() {
   roles.value = await RoleService.getAll()
@@ -153,7 +183,7 @@ function resetForm() {
     correo: '',
     password: '',
     numero_telefono: '',
-    role_id: null,
+    role_ids: [],
   }
   mode.value = 'create'
 }
@@ -190,8 +220,8 @@ function editItem(item: any) {
     numero_documento: item.numero_documento ?? '',
     correo: item.correo ?? '',
     numero_telefono: item.numero_telefono ?? '',
-    role_id: item.rol?.id ?? null,
     password: '',
+    role_ids: item.role_ids ?? [],
   }
   mode.value = 'update'
   window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -216,16 +246,14 @@ async function loadItems(options: any) {
     })
     serverItems.value = data.map((item: any) => ({
       id: item.id,
-      nombre: item.user?.nombre ?? '',
-      apellido: item.user?.apellido ?? '',
-      tipo_documento_id: item.user?.tipo_documento_id ?? null,
-      numero_documento: item.user?.numero_documento ?? '',
-      correo: item.user?.correo ?? '',
-      numero_telefono: item.user?.numero_telefono ?? '',
-      rol: {
-        id: item.roles?.id ?? null,
-        nombre: item.roles?.nombre ?? '',
-      },
+      nombre: item.nombre,
+      apellido: item.apellido,
+      tipo_documento_id: item.tipoDocumentoId,
+      numero_documento: item.numeroDocumento,
+      correo: item.correo,
+      numero_telefono: item.numeroTelefono,
+      roles: item.userRoles?.map((ur: any) => ur.roles?.nombre).filter(Boolean) ?? [],
+      role_ids: item.userRoles?.map((ur: any) => ur.roles?.id).filter(Boolean) ?? [],
     }))
     totalItems.value = total
   } catch (e) {

@@ -30,6 +30,7 @@
 
     <!-- Menú principal -->
     <v-list density="compact" nav>
+
       <v-list-item prepend-icon="mdi-home" title="Dashboard" to="/dashboard" link @click="closeDrawer" />
       <v-list-item prepend-icon="mdi-clipboard-list" title="Inventario" to="/inventario" link @click="closeDrawer" />
       <v-list-item prepend-icon="mdi-cube-outline" title="Productos" to="/producto" link @click="closeDrawer" />
@@ -59,6 +60,7 @@
           @click="closeDrawer"
         />
       </v-list-group>
+      
     </v-list>
   </v-navigation-drawer>
 </template>
