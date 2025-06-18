@@ -47,7 +47,7 @@ export default class UserService {
   static async update(id: number, data: any) {
     const token = localStorage.getItem('token')
     const response = await fetch(`${URL}/${id}`, {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
