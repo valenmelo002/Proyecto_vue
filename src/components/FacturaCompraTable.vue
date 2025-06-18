@@ -93,9 +93,8 @@ const props = defineProps<{
 function confirmarYEliminar(id: number | string) {
   if (!confirm) return;
   facturaCompraService.deleteFactura(String(id)).then(() => {
-    // Puedes emitir un evento para recargar la tabla
-    // $emit('reload')
-    window.location.reload(); // O recarga la tabla de otra forma
+    alert("La factura ha sido eliminada exitosamente");
+    window.location.reload();
   });
 }
 </script>

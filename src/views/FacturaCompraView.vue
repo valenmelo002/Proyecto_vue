@@ -144,6 +144,7 @@ async function handleSubmit(payload) {
     form.value.id = res.id;
     await cargarFacturas();
     resetForm();
+    alert("La factura ha sido creada exitosamente");
   }
 }
 
@@ -191,6 +192,7 @@ async function confirmUpdate() {
     await cargarFacturas();
     resetForm();
     pendingUpdatePayload.value = null;
+    alert("La factura ha sido editada exitosamente");
   }
 }
 </script>
