@@ -12,6 +12,7 @@ import ReceptionView from '@/views/ReceptionView.vue';
 import entradaSalidaProductosView from '@/views/imagenGramera.vue';
 import PerfilView from '@/views/PerfilView.vue';
 import UsersView from '@/views/UsersView.vue';
+import ConfirmarResetView from '@/views/ConfirmarResetView.vue'
 import WireframeLayout from '@/layouts/WireframeLayout.vue';
 
 const router = createRouter({
@@ -38,6 +39,18 @@ const router = createRouter({
       name: 'restore',
       component: RestoreView,
       meta: { layout: 'AuthLayout' }
+    },
+      {
+      path: '/enlace-generado',
+      name: 'enlace-generado',
+      component: () => import('@/views/EnlaceGeneradoView.vue'),
+      meta: { layout: 'AuthLayout' }
+    },
+    {
+    path: '/reset/:token',
+    name: 'reset-password',
+    component: ConfirmarResetView,
+    meta: { layout: 'AuthLayout' }
     },
     {
       path: '/perfil',
@@ -86,6 +99,12 @@ const router = createRouter({
       name: 'zona-pesaje',
       component: entradaSalidaProductosView,
       meta: { layout: 'WireframeLayout' }
+    },
+     {
+      path: '/setting/user',
+      name: 'usuarios',
+      component: UsersView,
+      meta: { layout: 'WireframeLayout', requiresAuth: true }
     }
   ]
 });
