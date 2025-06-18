@@ -248,10 +248,10 @@ async function loadItems(options: any) {
       id: item.id,
       nombre: item.nombre,
       apellido: item.apellido,
-      tipo_documento_id: item.tipo_documento_id,
-      numero_documento: item.numero_documento,
+      tipo_documento_id: item.tipoDocumentoId,
+      numero_documento: item.numeroDocumento,
       correo: item.correo,
-      numero_telefono: item.numero_telefono,
+      numero_telefono: item.numeroTelefono,
       roles: item.userRoles?.map((ur: any) => ur.roles?.nombre).filter(Boolean) ?? [],
       role_ids: item.userRoles?.map((ur: any) => ur.roles?.id).filter(Boolean) ?? [],
     }))
