@@ -30,33 +30,13 @@
 
     <!-- Menú principal -->
     <v-list density="compact" nav>
-      <v-list-item prepend-icon="mdi-home" title="Dashboard" to="/dashboard" link @click="closeDrawer" />
-      <v-list-item prepend-icon="mdi-clipboard-list" title="Inventario" to="/inventario" link @click="closeDrawer" />
-      <v-list-item prepend-icon="mdi-cube-outline" title="Productos" to="/producto" link @click="closeDrawer" />
-      <v-list-item prepend-icon="mdi-view-list" title="Historial" to="/historial-inventario" link @click="closeDrawer" />
-      <v-list-item prepend-icon="mdi-truck" title="Recepción" to="/recepcion" link @click="closeDrawer" />
-      <v-list-item prepend-icon="mdi-account-group" title="Proveedores" to="/proveedores" link @click="closeDrawer" />
-      <v-list-item prepend-icon="mdi-phone" title="Contacto" to="/contacto" link @click="closeDrawer" />
-      <v-list-item prepend-icon="mdi-scale-balance" title="Zona Pesaje" to="/zona-pesaje" link @click="closeDrawer" />
-
-      <!-- Grupo de configuración -->
-      <v-list-group
-        value="Configuración"
-        prepend-icon="mdi-cog-outline"
-        no-action
-      >
-        <template #activator="{ props }">
-          <v-list-item v-bind="props" title="Configuración" />
-        </template>
-
-        <v-list-item
-          title="Usuarios"
-          to="/setting/user"
-          prepend-icon="mdi-account-cog-outline"
-          link
-          @click="closeDrawer"
-        />
-      </v-list-group>
+      <v-list-item prepend-icon="mdi-home" title="Dashboard" to="/dashboard" link />
+      <v-list-item prepend-icon="mdi-clipboard-list" title="Inventario" to="/inventario" link />
+      <v-list-item prepend-icon="mdi-cube-outline" title="Productos" to="/producto" link />
+      <v-list-item prepend-icon="mdi-view-list" title="Historial" to="/historial-inventario" link />
+      <v-list-item prepend-icon="mdi-truck" title="Recepción" to="/recepcion" link />
+      <v-list-item prepend-icon="mdi-account-group" title="Proveedores" to="/proveedores" link />
+      <v-list-item prepend-icon="mdi-box" title="zona-pesaje" to="/zona-pesaje" link />
     </v-list>
   </v-navigation-drawer>
 </template>

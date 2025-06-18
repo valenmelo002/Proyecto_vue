@@ -16,5 +16,6 @@
   max-width: 220px;
   height: auto;
   object-fit: contain;
+  border-radius: 20px;
 }
 </style>
