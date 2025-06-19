@@ -9,8 +9,7 @@
         @open-detalle="abrirModalDetalle"
       />
 
-      <!-- Buscador antes de la tabla -->
-      <v-row class="mb-4" justify="center">
+      <v-row class="mb-6" justify="center">
         <v-col cols="12" sm="10" md="8" lg="6">
           <v-text-field
             v-model="search"
@@ -18,6 +17,7 @@
             dense
             clearable
             prepend-inner-icon="mdi-magnify"
+            class="search-spacing"
           />
         </v-col>
       </v-row>
@@ -71,7 +71,7 @@ import FacturaCompraForm from "@/components/FacturaCompraForm.vue";
 import FacturaCompraTable from "@/components/FacturaCompraTable.vue";
 import FacturaCompraDetalleModal from "@/components/FacturaCompraDetalleModal.vue";
 import ModalComponent from "@/components/ModalComponent.vue";
-import ConfirmDialog from "@/components/ModalComponent.vue";
+
 
 const facturas = ref([]);
 const search = ref("");
@@ -90,9 +90,12 @@ const snackbar = ref({
 });
 
 function mostrarMensaje(mensaje: string, color: string = 'success') {
+  snackbar.value.show = false; // reset para forzar re-render
   snackbar.value.message = mensaje;
   snackbar.value.color = color;
-  snackbar.value.show = true;
+  setTimeout(() => {
+    snackbar.value.show = true;
+  }, 10);
 }
 
 const headers = [
@@ -195,6 +198,10 @@ async function confirmUpdate() {
   width: 100%;
   margin: auto;
   box-sizing: border-box;
+}
+
+.search-spacing {
+  margin-bottom: 16px;
 }
 
 @media (max-width: 1024px) {
