@@ -1,6 +1,6 @@
 export default class PasswordService {
   async cambiarPassword(correo: string, actual: string, nueva: string) {
-    const response = await fetch('http://localhost:3333/cambiar-password', {
+    const response = await fetch('http://147.93.114.138:8091/cambiar-password', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

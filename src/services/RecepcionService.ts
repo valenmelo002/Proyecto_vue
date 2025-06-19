@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3333/recepcion"
+const API_URL = "http://147.93.114.138:8091/recepcion"
 
 export default class RecepcionService {
   static async getToken() {

@@ -1,4 +1,4 @@
-const URL = 'http://localhost:3333/unidad-medida'
+const URL = 'http://147.93.114.138:8091/unidad-medida'
 
 export default class UnidadMedidaService {
   static async getAll() {

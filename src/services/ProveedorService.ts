@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3333/proveedores'
+const API_URL = '/proveedores'
 
 export default class ProveedoresService {
   static async getToken() {

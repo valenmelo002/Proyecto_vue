@@ -1,4 +1,4 @@
-const URL = 'http://localhost:3333/categoria'
+const URL = 'http://147.93.114.138:8091/categoria'
 
 export default class CategoriaService {
   static async getAll() {

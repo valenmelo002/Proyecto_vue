@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_URL = 'http://localhost:3333/api/v1/facturasCompra'
+const API_URL = 'http://147.93.114.138:8091/api/v1/facturasCompra'
 
 // Interceptor para agregar el token a cada petición
 axios.interceptors.request.use(config => {

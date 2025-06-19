@@ -1,4 +1,4 @@
-const URL = 'http://localhost:3333/user_roles'
+const URL = 'http://147.93.114.138:8091/user_roles'
 
 export default class UserService {
   static async getAll({ page = 1, limit = 10, nombre = '' }) {

@@ -1,4 +1,4 @@
-const URL = 'http://localhost:3333/roles'
+const URL = 'http://147.93.114.138:8091/roles'
 
 export default class RoleService {
   static async getAll() {

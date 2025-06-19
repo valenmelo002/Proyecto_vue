@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3333/historial-inventario'
+const API_URL = 'http://147.93.114.138:8091/historial-inventario'
 
 export default class HistorialInventarioService {
   static async getToken() {

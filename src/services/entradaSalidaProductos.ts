@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080/api/ocr';
+const API_BASE_URL = 'http://localhost:8100/api/ocr';
 
 export async function procesarImagenService(imagen: File): Promise<any> {
   const formData = new FormData();

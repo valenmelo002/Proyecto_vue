@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3333/inventario"
+const API_URL = "http://147.93.114.138:8091/inventario"
 
 export default class InventarioService {
   static async getToken() {
