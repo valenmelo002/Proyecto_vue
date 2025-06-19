@@ -3,61 +3,62 @@
     <!-- FORMULARIO RESPONSIVO -->
     <v-container class="d-flex justify-center px-2" style="max-width: 1440px;">
       <div class="form-wrapper w-100">
-        <v-row dense>
-          <v-col cols="12" sm="6">
-            <v-select
-              label="Producto"
-              :items="productos"
-              item-value="id"
-              item-title="nombre"
-              v-model="form.producto_id"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-              class="w-100"
-            />
-          </v-col>
+        <v-form ref="formRef" v-model="formIsValid">
+          <v-row dense>
+            <v-col cols="12" sm="6">
+              <v-select
+                label="Producto"
+                :items="productos"
+                item-value="id"
+                item-title="nombre"
+                v-model="form.producto_id"
+                variant="outlined"
+                density="comfortable"
+                :rules="[rules.required]"
+                class="w-100"
+              />
+            </v-col>
 
-          <v-col cols="12" sm="6">
-            <v-select
-              label="Unidad de medida"
-              :items="unidades"
-              item-value="id"
-              item-title="nombre"
-              v-model="form.unidad_medida_id"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-              class="w-100"
-            />
-          </v-col>
+            <v-col cols="12" sm="6">
+              <v-select
+                label="Unidad de medida"
+                :items="unidades"
+                item-value="id"
+                item-title="nombre"
+                v-model="form.unidad_medida_id"
+                variant="outlined"
+                density="comfortable"
+                :rules="[rules.required]"
+                class="w-100"
+              />
+            </v-col>
 
-          <v-col cols="12" sm="6">
-            <v-text-field
-              label="Cantidad"
-              v-model.number="form.cantidad"
-              type="number"
-              variant="outlined"
-              density="comfortable"
-              hide-details
-              class="w-100"
-            />
-          </v-col>
+            <v-col cols="12" sm="6">
+              <v-text-field
+                label="Cantidad"
+                v-model.number="form.cantidad"
+                type="number"
+                variant="outlined"
+                density="comfortable"
+                :rules="[rules.required, rules.positive]"
+                class="w-100"
+              />
+            </v-col>
 
-          <v-col cols="12" sm="6">
-            <v-textarea
-              label="Observación"
-              v-model="form.observacion"
-              variant="outlined"
-              density="comfortable"
-              rows="1"
-              auto-grow
-              hide-details
-              class="w-100"
-              style="min-height: 56px;"
-            />
-          </v-col>
-        </v-row>
+            <v-col cols="12" sm="6">
+              <v-textarea
+                label="Observación"
+                v-model="form.observacion"
+                variant="outlined"
+                density="comfortable"
+                rows="1"
+                auto-grow
+                class="w-100"
+                style="min-height: 56px;"
+              />
+            </v-col>
+          </v-row>
+        </v-form>
 
         <div class="d-flex justify-center ga-2 mt-4 mb-6 flex-wrap">
           <v-btn color="primary" :loading="loading" @click="handleGuardar">
@@ -68,7 +69,7 @@
       </div>
     </v-container>
 
-    <!-- TARJETAS EN V-CARD PARA MOVIL / TABLA PARA DESKTOP -->
+    <!-- TABLA Y CARDS -->
     <v-container class="mx-auto px-2" style="max-width: 1440px;">
       <v-card elevation="4" rounded="xl" class="pa-4">
         <v-text-field
@@ -132,7 +133,7 @@
       </v-card>
     </v-container>
 
-    <!-- CONFIRMACION Y SNACKBAR -->
+    <!-- MODALES Y SNACKBAR -->
     <ConfirmDialog
       v-model="confirmDialog"
       :title="mode === 'create' ? 'Confirmar creación' : 'Confirmar actualización'"
@@ -176,6 +177,14 @@ const headers = ref([
   { title: 'Fecha', key: 'createdAt' },
   { title: 'Acciones', key: 'acciones', sortable: false }
 ])
+
+const formRef = ref()
+const formIsValid = ref(false)
+
+const rules = {
+  required: (v: any) => !!v || 'El campo es obligatorio',
+  positive: (v: number) => (v > 0) || 'Debe ser mayor que 0',
+}
 
 const itemsPerPage = ref(5)
 const serverItems = ref([])
@@ -233,15 +242,12 @@ function resetForm() {
     observacion: '',
   }
   mode.value = 'create'
+  formRef.value?.resetValidation()
 }
 
-function handleGuardar() {
-  if (
-    !form.value.producto_id ||
-    !form.value.unidad_medida_id ||
-    form.value.cantidad === null ||
-    form.value.cantidad <= 0
-  ) {
+async function handleGuardar() {
+  const { valid } = await formRef.value?.validate()
+  if (!valid) {
     snackbar.value = {
       show: true,
       message: 'Por favor completa todos los campos obligatorios con datos válidos.',
@@ -249,7 +255,6 @@ function handleGuardar() {
     }
     return
   }
-
   confirmDialog.value = true
 }
 

@@ -1,110 +1,86 @@
 <template>
-  <v-form @submit.prevent="emitSubmit" class="pa-4 form-responsive">
+  <v-form ref="formRef" @submit.prevent="submit">
     <v-row dense>
-      <v-col cols="12" sm="6">
+      <v-col cols="12" md="6">
         <v-text-field
-          v-model="localForm.numeroFactura"
-          label="Número de factura"
+          label="Número Factura"
+          v-model="form.numeroFactura"
+          :rules="[rules.required, rules.integer]"
           type="number"
-          dense
-          outlined
-          hide-details
-          required
+          clearable
         />
       </v-col>
-      <v-col cols="12" sm="6">
+
+      <v-col cols="12" md="6">
         <v-text-field
-          v-model="localForm.nit"
           label="NIT"
+          v-model="form.nit"
+          :rules="[rules.required, rules.integer]"
           type="number"
-          dense
-          outlined
-          hide-details
-          required
+          clearable
         />
       </v-col>
-      <v-col cols="12" sm="6">
+
+      <v-col cols="12" md="6">
         <v-text-field
-          v-model="localForm.nombreEmpresa"
-          label="Nombre de la empresa"
-          dense
-          outlined
-          hide-details
-          required
+          label="Nombre Empresa"
+          v-model="form.nombreEmpresa"
+          :rules="[rules.required, rules.nombreEmpresa]"
+          clearable
         />
       </v-col>
-      <v-col cols="12" sm="6">
+
+      <v-col cols="12" md="6">
         <v-text-field
-          v-model="localForm.direccionEmpresa"
-          label="Dirección de la empresa"
-          dense
-          outlined
-          hide-details
-          required
+          label="Dirección Empresa"
+          v-model="form.direccionEmpresa"
+          :rules="[rules.required, rules.direccionEmpresa]"
+          clearable
         />
       </v-col>
-    </v-row>
-    <v-row dense class="mt-2" justify="end">
-      <v-btn
-        color="primary"
-        type="submit"
-        size="small"
-        class="mr-2"
-        elevation="1"
-      >
-        {{ isEditing ? "Actualizar" : "Guardar" }}
-      </v-btn>
-      <v-btn
-        variant="text"
-        size="small"
-        color="secondary"
-        @click="emitReset"
-        elevation="0"
-      >
-        Limpiar
-      </v-btn>
+
+      <v-col cols="12" md="6">
+        <v-btn type="submit" color="primary" class="mt-4" block>
+          {{ isEditing ? 'Actualizar' : 'Guardar' }}
+        </v-btn>
+      </v-col>
+
+      <v-col cols="12" md="6">
+        <v-btn type="button" class="mt-4" block @click="$emit('reset')">
+          Cancelar
+        </v-btn>
+      </v-col>
     </v-row>
   </v-form>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
-const props = defineProps({
-  form: { type: Object, default: () => ({}) },
-  isEditing: Boolean,
-});
-const emit = defineEmits(["submit", "reset"]);
+import { ref } from 'vue'
 
-const localForm = ref({ ...props.form });
+const props = defineProps<{
+  form: any
+  isEditing: boolean
+}>()
 
-// Sincroniza localForm con form del padre
-watch(
-  () => props.form,
-  (val) => {
-    Object.assign(localForm.value, val || {});
-  },
-  { deep: true }
-);
+const emit = defineEmits(['submit', 'reset'])
 
-function emitSubmit() {
-  emit("submit", { ...localForm.value });
+const formRef = ref()
+
+const rules = {
+  required: (v: any) => !!v || 'Este campo es obligatorio',
+  integer: (v: any) =>
+    Number.isInteger(Number(v)) && Number(v) > 0 || 'Debe ser un número entero positivo',
+  nombreEmpresa: (v: string) =>
+    (v && v.trim().length >= 3 && v.trim().length <= 255) || 'Debe tener entre 3 y 255 caracteres',
+  direccionEmpresa: (v: string) =>
+    (v && v.trim().length >= 3 && v.trim().length <= 255) || 'Debe tener entre 3 y 255 caracteres',
 }
 
-function emitReset() {
-  localForm.value = {};
-  emit("reset");
+function submit() {
+  formRef.value?.validate().then((valid: boolean) => {
+    if (valid) {
+      emit('submit', props.form)
+    }
+  })
 }
 </script>
-
-<style scoped>
-.form-responsive {
-  max-width: 500px;
-  margin: auto;
-}
-@media (max-width: 600px) {
-  .form-responsive {
-    padding: 8px !important;
-    max-width: 100%;
-  }
-}
-</style>

@@ -37,7 +37,6 @@
       <v-list-item prepend-icon="mdi-view-list" title="Historial" to="/historial-inventario" link @click="closeDrawer" />
       <v-list-item prepend-icon="mdi-truck" title="Recepción" to="/recepcion" link @click="closeDrawer" />
       <v-list-item prepend-icon="mdi-account-group" title="Proveedores" to="/proveedores" link @click="closeDrawer" />
-      <v-list-item prepend-icon="mdi-phone" title="Contacto" to="/contacto" link @click="closeDrawer" />
       <v-list-item prepend-icon="mdi-scale-balance" title="Zona Pesaje" to="/zona-pesaje" link @click="closeDrawer" />
       <v-list-item prepend-icon="mdi-file-document-edit" title="Factura Compra" to="/facturasCompra" link @click="closeDrawer" />
 
@@ -59,7 +58,7 @@
           @click="closeDrawer"
         />
       </v-list-group>
-      
+
     </v-list>
   </v-navigation-drawer>
 </template>
