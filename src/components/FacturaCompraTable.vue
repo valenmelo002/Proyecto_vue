@@ -42,7 +42,7 @@
       </v-row>
     </div>
 
-    <!-- Vista tipo tabla (para pantallas medianas en adelante) -->
+    <!-- Vista tipo tabla (pantallas medianas en adelante) -->
     <div class="d-none d-md-block">
       <v-data-table
         :headers="headers"
@@ -100,14 +100,24 @@
         </template>
       </v-data-table>
     </div>
+
+    <!-- Snackbar de éxito -->
+    <v-snackbar v-model="snackbar" :timeout="3000" color="success">
+      {{ snackbarText }}
+      <template #actions>
+        <v-btn color="white" variant="text" @click="snackbar = false">Cerrar</v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import * as facturaCompraService from "@/services/facturaCompraService";
 import EditComponent from "@/components/button/EditComponent.vue";
 import DeleteComponent from "@/components/button/DeleteComponent.vue";
 
+// Interfaces
 interface Detalle {
   id: number | string;
   proveedor: string;
@@ -122,17 +132,36 @@ interface Factura {
   detalles?: Detalle[];
 }
 
+// Props y emit
 const props = defineProps<{
   facturas: Factura[];
   headers: any[];
 }>();
 
+const emit = defineEmits(["edit", "reload", "agregar-detalle"]);
+
+// Snackbar control
+const snackbar = ref(false);
+const snackbarText = ref("");
+
+// Función para confirmar y eliminar factura
 function confirmarYEliminar(id: number | string) {
-  if (!confirm) return;
-  facturaCompraService.deleteFactura(String(id)).then(() => {
-    alert("La factura ha sido eliminada exitosamente");
-    window.location.reload();
-  });
+  facturaCompraService.deleteFactura(String(id))
+    .then(() => {
+      snackbarText.value = "La factura ha sido eliminada exitosamente";
+      snackbar.value = true;
+
+      // ✅ Opción 1: Emitir evento al padre (preferido si el padre tiene lógica para recargar)
+      emit("reload");
+
+      // ❌ Opción 2: Recargar la página directamente (descomenta si no usas `emit`)
+      // setTimeout(() => window.location.reload(), 1000);
+    })
+    .catch((error) => {
+      console.error(error);
+      snackbarText.value = "Error al eliminar la factura";
+      snackbar.value = true;
+    });
 }
 </script>
 

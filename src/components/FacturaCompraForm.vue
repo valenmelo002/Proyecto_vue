@@ -39,14 +39,21 @@
         />
       </v-col>
 
-      <v-col cols="12" md="6">
-        <v-btn type="submit" color="primary" class="mt-4" block>
+      <!-- Botones con separación hacia abajo -->
+      <v-col cols="12" class="d-flex justify-center mb-10">
+        <v-btn
+          type="submit"
+          color="primary"
+          class="me-4 px-6 py-2"
+        >
           {{ isEditing ? 'Actualizar' : 'Guardar' }}
         </v-btn>
-      </v-col>
 
-      <v-col cols="12" md="6">
-        <v-btn type="button" class="mt-4" block @click="$emit('reset')">
+        <v-btn
+          type="button"
+          class="ms-4 px-6 py-2"
+          @click="$emit('reset')"
+        >
           Cancelar
         </v-btn>
       </v-col>
