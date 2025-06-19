@@ -14,6 +14,7 @@ import PerfilView from '@/views/PerfilView.vue';
 import UsersView from '@/views/UsersView.vue';
 import ConfirmarResetView from '@/views/ConfirmarResetView.vue'
 import WireframeLayout from '@/layouts/WireframeLayout.vue';
+import FacturaCompraView from '@/views/FacturaCompraView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -100,12 +101,24 @@ const router = createRouter({
       component: entradaSalidaProductosView,
       meta: { layout: 'WireframeLayout' }
     },
+    {
+      path: '/facturasCompra',
+      name: 'facturasCompra',
+      component: FacturaCompraView,
+      meta: { layout: 'WireframeLayout' }
+    },
+    {
+      path: '/setting/user',
+      name: 'usuarios',
+      component: UsersView,
+      meta: { layout: 'WireframeLayout' }
+    },
      {
       path: '/setting/user',
       name: 'usuarios',
       component: UsersView,
       meta: { layout: 'WireframeLayout', requiresAuth: true }
-    }
+    },
   ]
 });
 
